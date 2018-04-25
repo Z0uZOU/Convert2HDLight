@@ -1,10 +1,7 @@
 #!/bin/bash
 
 # Idée :
-# stopper si pas assez d'espace libre (idem pour copie dans dossier filebot)
 # vérifier que le fichier_base soit bien celui du .desktop (pour autres scripts aussi)
-# cas de figure une seule bande son, fr pas spécifier
-# push si 3D ou problème durée
 # peut être plusieurs profiles HDLight (sans toucher le son par exemple)
 # fonction optionnelle avancée (FileBot peut récup les sous titre... les ajoutés)
 # prendre en charge les petits fichiers (handbrake)
