@@ -16,6 +16,7 @@ L'idée de base est donc d'encoder automatiquement les médias dans ce format.
 
 
 **Remerciements :**
+
 Notre script se base sur de nombreux outils développés par la communauté, voici les principaux:
 - FileBot
 - HandBrake
