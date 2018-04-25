@@ -7,8 +7,8 @@
 
 ## **IMPORTANT:**
 
-[<img src="https://github.com/scoony/yggtorrent.c.1h.sh/blob/master/.cache-icons/extensions-gnome.png">](https://extensions.gnome.org/extension/1176/argos/) 
-[<img src="https://github.com/scoony/yggtorrent.c.1h.sh/blob/master/.cache-icons/pushover.png">](https://pushover.net/)
+[<img src="https://github.com/Z0uZOU/Convert2HDLight/blob/master/.cache-icons/extensions-gnome.png">](https://extensions.gnome.org/extension/1176/argos/) 
+[<img src="https://github.com/Z0uZOU/Convert2HDLight/blob/master/.cache-icons/pushover.png">](https://pushover.net/)
 
 + Ce script peut exploiter Argos, vous devez imperativement l'avoir installé préalablement.
   - Page officielle de l'extension à installer: https://extensions.gnome.org/extension/1176/argos/
