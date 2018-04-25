@@ -13,3 +13,10 @@ L'idée de base est donc d'encoder automatiquement les médias dans ce format.
 - Ce script necessite d'être executé depuis le compte root
 - Ce script "devrait" installer les dépendances necessaires à son exécution
 - Ce script va modifier le cron pour automatiser les conversions (toute les x minutes)
+
+
+**Remerciements :**
+Notre script se base sur de nombreux outils développés par la communauté, voici les principaux:
+- FileBot
+- HandBrake
+- Argos
