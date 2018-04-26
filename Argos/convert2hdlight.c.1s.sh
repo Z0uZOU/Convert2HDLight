@@ -35,7 +35,7 @@ if [[ ! -d "$HOME/.config/argos/convert2hdlight/log" ]]; then
 fi
 
 #### Récupération des versions (locale et distante)
-script_pastebin="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.c.1m.sh"
+script_pastebin="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/Argos/convert2hdlight.c.1s.sh"
 local_version=$version
 pastebin_version=`wget -O- -q "$script_pastebin" | grep "^version=" | sed '/grep/d' | sed 's/.*version="//' | sed 's/".*//'`
 
