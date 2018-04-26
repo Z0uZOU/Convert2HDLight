@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-version="0.0.0.18"
+version="0.0.0.19"
 
 #### Nettoyage
 if [[ -f "~/convert2hdlight-update.sh" ]]; then
@@ -116,8 +116,8 @@ if [[ ! -f "$icons_cache" ]]; then
   mkdir -p $icons_cache
 fi
 if [[ ! -f "$icons_cache/updater.png" ]] ; then curl -o "$icons_cache/updater.png" "https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/.cache-icons/updater.png" ; fi
-if [[ ! -f "$icons_cache/convert2hdlight-argos.png" ]] ; then curl -o "$icons_cache/convert2hdlight-argos.png" "https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/.cache-icons/convert2hdlight-argos.png" ; fi
-if [[ ! -f "$icons_cache/convert2hdlight-bad-argos.png" ]] ; then curl -o "$icons_cache/convert2hdlight-bad-argos.png" "https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/.cache-icons/convert2hdlight-bad-argos.png" ; fi
+if [[ ! -f "$icons_cache/convert2hdlight-argos.png" ]] ; then curl -o "$icons_cache/convert2hdlight-argos.png" "https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/.cache-icons/hdlightencode-argos.png" ; fi
+if [[ ! -f "$icons_cache/convert2hdlight-bad-argos.png" ]] ; then curl -o "$icons_cache/convert2hdlight-bad-argos.png" "https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/.cache-icons/hdlightencode-bad-argos.png" ; fi
 if [[ ! -f "$icons_cache/movie_folder.png" ]] ; then curl -o "$icons_cache/movie_folder.png" "https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/.cache-icons/movie_folder.png" ; fi
 if [[ ! -f "$icons_cache/movie_file.png" ]] ; then curl -o "$icons_cache/movie_file.png" "https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/.cache-icons/movie_file.png" ; fi
 
