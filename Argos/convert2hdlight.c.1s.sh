@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-version="0.0.0.17"
+version="0.0.0.18"
 
 #### Nettoyage
 if [[ -f "~/convert2hdlight-update.sh" ]]; then
@@ -15,7 +15,7 @@ if [[ ! -f "/bin/wget" ]] && [[ ! -f "/usr/bin/wget" ]]; then wget_missing="1"; 
 if [[ ! -f "/bin/grep" ]] && [[ ! -f "/usr/bin/grep" ]]; then grep_missing="1"; fi
 if [[ ! -f "/bin/sed" ]] && [[ ! -f "/usr/bin/sed" ]]; then sed_missing="1"; fi
 if [[ "$yad_missing" == "1" ]] || [[ "$curl_missing" == "1" ]] || [[ "$gawk_missing" == "1" ]] || [[ "$wget_missing" == "1" ]] || [[ "$grep_missing" == "1" ]] || [[ "$sed_missing" == "1" ]]; then
-  CONVERT2HDLIGHT_BAD_ICON=$(curl -s "https://raw.githubusercontent.com/Z0uZOU/convert2hdlight.c.1m.sh/master/.cache-icons/convert2hdlight.png" | base64 -w 0)
+  CONVERT2HDLIGHT_BAD_ICON=$(curl -s "https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/.cache-icons/hdlightencode-bad-argos.png" | base64 -w 0)
   echo " Erreur(s) | image='$CONVERT2HDLIGHT_BAD_ICON' imageWidth=25"
   echo "---"
   if [[ "$yad_missing" == "1" ]]; then echo -e "\e[1mDépendance manquante      :\e[0m sudo apt-get install yad | ansi=true font='Ubuntu Mono'"; fi
@@ -35,7 +35,7 @@ if [[ ! -d "$HOME/.config/argos/convert2hdlight/log" ]]; then
 fi
 
 #### Récupération des versions (locale et distante)
-script_pastebin="https://raw.githubusercontent.com/Z0uZOU/convert2hdlight.c.1m.sh/master/convert2hdlight.c.1m.sh"
+script_pastebin="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.c.1m.sh"
 local_version=$version
 pastebin_version=`wget -O- -q "$script_pastebin" | grep "^version=" | sed '/grep/d' | sed 's/.*version="//' | sed 's/".*//'`
 
@@ -98,8 +98,8 @@ if [[ "$compare" != "" ]] ; then
   echo "(" >> ~/convert2hdlight-update.sh
   echo "echo \"75\"" >> ~/convert2hdlight-update.sh
   echo "echo \"# Mise à jour en cours.\" ; sleep 2" >> ~/convert2hdlight-update.sh
-  echo "curl -o ~/.config/argos/convert2hdlight.c.1m.sh $script_pastebin" >> ~/convert2hdlight-update.sh
-  echo "sed -i -e 's/\r//g' ~/.config/argos/convert2hdlight.c.1m.sh" >> ~/convert2hdlight-update.sh
+  echo "curl -o ~/.config/argos/convert2hdlight.c.1s.sh $script_pastebin" >> ~/convert2hdlight-update.sh
+  echo "sed -i -e 's/\r//g' ~/.config/argos/convert2hdlight.c.1s.sh" >> ~/convert2hdlight-update.sh
   echo "echo \"100\"" >> ~/convert2hdlight-update.sh
   echo ") |" >> ~/convert2hdlight-update.sh
   echo "yad --undecorated --width=500 --progress --center --no-buttons --no-escape --skip-taskbar --image=\"$HOME/.config/argos/.cache-icons/updater.png\" --text-align=\"center\" --text=\"\rUne mise à jour de <b>convert2hdlight.c.1m.sh</b> a été detectée.\r\rVersion locale: <b>$local_version</b>\rVersion distante: <b>$pastebin_version</b>\r\r<b>Installation de la mise à jour...</b>\r\" --auto-kill --auto-close" >> ~/convert2hdlight-update.sh  echo "75"
@@ -115,15 +115,15 @@ icons_cache=`echo $HOME/.config/argos/.cache-icons`
 if [[ ! -f "$icons_cache" ]]; then
   mkdir -p $icons_cache
 fi
-if [[ ! -f "$icons_cache/updater.png" ]] ; then curl -o "$icons_cache/updater.png" "https://raw.githubusercontent.com/Z0uZOU/convert2hdlight.c.1m.sh/master/.cache-icons/updater.png" ; fi
-if [[ ! -f "$icons_cache/convert2hdlight.png" ]] ; then curl -o "$icons_cache/convert2hdlight.png" "https://raw.githubusercontent.com/Z0uZOU/convert2hdlight.c.1m.sh/master/.cache-icons/convert2hdlight.png" ; fi
-if [[ ! -f "$icons_cache/convert2hdlight-bad.png" ]] ; then curl -o "$icons_cache/convert2hdlight-bad.png" "https://raw.githubusercontent.com/Z0uZOU/convert2hdlight.c.1m.sh/master/.cache-icons/convert2hdlight-bad.png" ; fi
-if [[ ! -f "$icons_cache/movie_folder.png" ]] ; then curl -o "$icons_cache/movie_folder.png" "https://raw.githubusercontent.com/Z0uZOU/convert2hdlight.c.1m.sh/master/.cache-icons/movie_folder.png" ; fi
-if [[ ! -f "$icons_cache/movie_file.png" ]] ; then curl -o "$icons_cache/movie_file.png" "https://raw.githubusercontent.com/Z0uZOU/convert2hdlight.c.1m.sh/master/.cache-icons/movie_file.png" ; fi
+if [[ ! -f "$icons_cache/updater.png" ]] ; then curl -o "$icons_cache/updater.png" "https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/.cache-icons/updater.png" ; fi
+if [[ ! -f "$icons_cache/convert2hdlight-argos.png" ]] ; then curl -o "$icons_cache/convert2hdlight-argos.png" "https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/.cache-icons/convert2hdlight-argos.png" ; fi
+if [[ ! -f "$icons_cache/convert2hdlight-bad-argos.png" ]] ; then curl -o "$icons_cache/convert2hdlight-bad-argos.png" "https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/.cache-icons/convert2hdlight-bad-argos.png" ; fi
+if [[ ! -f "$icons_cache/movie_folder.png" ]] ; then curl -o "$icons_cache/movie_folder.png" "https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/.cache-icons/movie_folder.png" ; fi
+if [[ ! -f "$icons_cache/movie_file.png" ]] ; then curl -o "$icons_cache/movie_file.png" "https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/.cache-icons/movie_file.png" ; fi
 
 #### Mise en variable des icones
-CONVERT2HDLIGHT_ICON=$(curl -s "file://$icons_cache/convert2hdlight.png" | base64 -w 0)
-CONVERT2HDLIGHT_BAD_ICON=$(curl -s "file://$icons_cache/convert2hdlight-bad.png" | base64 -w 0)
+CONVERT2HDLIGHT_ICON=$(curl -s "file://$icons_cache/convert2hdlight-argos.png" | base64 -w 0)
+CONVERT2HDLIGHT_BAD_ICON=$(curl -s "file://$icons_cache/convert2hdlight-bad-argos.png" | base64 -w 0)
 FOLDER_ICON=$(curl -s "file://$icons_cache/movie_folder.png" | base64 -w 0)
 FiLE_ICON=$(curl -s "file://$icons_cache/movie_file.png" | base64 -w 0)
 
