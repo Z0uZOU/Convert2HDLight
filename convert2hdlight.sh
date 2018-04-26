@@ -15,9 +15,9 @@
 ## Installation bin: wget -q https://pastebin.com/raw/4VitUXFQ -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://pastebin.com/raw/4VitUXFQ -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.35" #base du système de mise à jour
+version="Version: 0.0.1.36" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
-script_pastebin="https://pastebin.com/raw/4VitUXFQ" #emplacement du script original
+script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_pastebin="https://pastebin.com/raw/vJpabVtT" #emplacement du changelog de ce script
 icone_imgur="http://i.imgur.com/OymcuTl.png" #emplacement de l'icône du script
 required_repos="ppa:neurobin/ppa ppa:webupd8team/java ppa:stebbins/handbrake-releases" #ajout de repository
@@ -25,8 +25,8 @@ required_tools="oracle-java8-installer handbrake-cli trash-cli curl mlocate lm-s
 required_tools_pip="" #dépendances du script (PIP)
 script_cron="0 * * * *" #ne définir que la planification
 verification_process="HandBrakeCLI" #si ces process sont détectés on ne notifie pas (ou ne lance pas en doublon)
-# mon_fichier_json=`echo "/opt/scripts/hdlight-encode.json"` #fichier nécessaire pour la conversion
-mon_fichier_json_pastebin="https://pastebin.com/raw/aAtWqedd" #lien vers le fichier json
+mon_fichier_json_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/hdlight-encode.json" #lien vers le fichier json, fichier nécessaire pour la conversion
+mon_script_argos_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/Argos/convert2hdlight.c.1s.sh" #lien vers le script Argos
 ########################
  
 #### Vérification que le script possède les droits root
@@ -261,7 +261,7 @@ if [[ -f "$mon_script_updater" ]] ; then
 fi
  
 #### Vérification de version pour éventuelle mise à jour
-version_distante=`wget -O- -q "$script_pastebin" | grep "Version:" | awk '{ print $2 }' | sed -n 1p | awk '{print $1}' | sed -e 's/\r//g' | sed 's/"//g'`
+version_distante=`wget -O- -q "$script_github" | grep "Version:" | awk '{ print $2 }' | sed -n 1p | awk '{print $1}' | sed -e 's/\r//g' | sed 's/"//g'`
 version_locale=`echo $version | awk '{print $2}'`
  
 vercomp () {
@@ -314,7 +314,7 @@ if [[ "$compare" != "" ]] ; then
   chmod +x $mon_script_updater
   echo "#!/bin/bash" >> $mon_script_updater
   mon_script_fichier_temp=`echo $mon_script_fichier"-temp"`
-  echo "wget -q $script_pastebin -O $mon_script_fichier_temp" >> $mon_script_updater
+  echo "wget -q $script_github -O $mon_script_fichier_temp" >> $mon_script_updater
   echo "sed -i -e 's/\r//g' $mon_script_fichier_temp" >> $mon_script_updater
   if [[ "$mon_script_fichier" =~ \.sh$ ]]; then
     echo "mv $mon_script_fichier_temp $mon_script_fichier" >> $mon_script_updater
@@ -607,11 +607,11 @@ fi
 chemin_argos=`locate "/.config/argos/" | sed '/\/home\//!d' | sed 's/\/.config.*//g' | sort -u`
 if [[ "$chemin_argos" != "" ]]; then
   chemin_argos+="/.config/argos"
-  if [[ ! -f "$chemin_argos/convert2hdlight.c.1m.sh" ]]; then
-    wget -q https://raw.githubusercontent.com/Z0uZOU/convert2hdlight.c.1m.sh/master/convert2hdlight.c.1m.sh -O $chemin_argos/convert2hdlight.c.1m.sh && sed -i -e 's/\r//g' $chemin_argos/convert2hdlight.c.1m.sh && chmod 777 $chemin_argos/convert2hdlight.c.1m.sh && chmod -x $chemin_argos/convert2hdlight.c.1m.sh
-  else 
-    if [[ -x "$chemin_argos/convert2hdlight.c.1m.sh" ]]; then
-      chmod -x $chemin_argos/convert2hdlight.c.1m.sh
+  if [[ ! -f "$chemin_argos/convert2hdlight.c.1s.sh" ]]; then
+    wget -q mon_script_argos_github -O $chemin_argos/convert2hdlight.c.1s.sh && sed -i -e 's/\r//g' $chemin_argos/convert2hdlight.c.1s.sh && chmod 777 $chemin_argos/convert2hdlight.c.1s.sh && chmod -x $chemin_argos/convert2hdlight.c.1s.sh
+  else
+    if [[ -x "$chemin_argos/convert2hdlight.c.1s.sh" ]]; then
+      chmod -x $chemin_argos/convert2hdlight.c.1s.sh
     fi
   fi
 fi
@@ -637,7 +637,7 @@ if [[ -f "$chemin_json" ]] ; then
   eval 'echo -e "[\e[42m\u2713 \e[0m] Le fichier de règlages du convertisseur est présent"' $mon_log_perso
 else
   eval 'echo -e "[\e[41m\u2717 \e[0m] Le Fichier de réglages du convertisseur est absent, téléchargement du fichier"' $mon_log_perso
-  wget -q $mon_fichier_json_pastebin -O $chemin_json && sed -i -e 's/\r//g' $chemin_json
+  wget -q $mon_fichier_json_github -O $chemin_json && sed -i -e 's/\r//g' $chemin_json
 fi
  
 ## Espace libre
@@ -770,8 +770,8 @@ rm -f $dossier_config/tmpfile
 ## Traitement des médias
 if [[ "$mes_medias" != "" ]] ; then
   #### Activation du script argos
-  if [[ -f "$chemin_argos/convert2hdlight.c.1m.sh" ]]; then
-    chmod +x $chemin_argos/convert2hdlight.c.1m.sh 
+  if [[ -f "$chemin_argos/convert2hdlight.c.1s.sh" ]]; then
+    chmod +x $chemin_argos/convert2hdlight.c.1s.sh 
   fi
   for mon_media in "${mes_medias[@]}"; do
     ## vérification que le fichiers de ne soit pas en copie/déplacement
@@ -1169,8 +1169,8 @@ if [[ "$mes_medias" != "" ]] ; then
     fi
   done
   #### Désactivation du script argos
-  if [[ -f "$chemin_argos/convert2hdlight.c.1m.sh" ]]; then
-    chmod -x $chemin_argos/convert2hdlight.c.1m.sh 
+  if [[ -f "$chemin_argos/convert2hdlight.c.1s.sh" ]]; then
+    chmod -x $chemin_argos/convert2hdlight.c.1s.sh 
   fi
   
   #### Suppression des dossiers vides
