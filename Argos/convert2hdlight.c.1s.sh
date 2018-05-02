@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-version="0.0.0.21"
+version="0.0.0.22"
 
 #### Nettoyage
 if [[ -f "~/convert2hdlight-update.sh" ]]; then
@@ -102,12 +102,12 @@ if [[ "$compare" != "" ]] ; then
   echo "sed -i -e 's/\r//g' ~/.config/argos/convert2hdlight.c.1s.sh" >> ~/convert2hdlight-update.sh
   echo "echo \"100\"" >> ~/convert2hdlight-update.sh
   echo ") |" >> ~/convert2hdlight-update.sh
-  echo "yad --undecorated --width=500 --progress --center --no-buttons --no-escape --skip-taskbar --image=\"$HOME/.config/argos/.cache-icons/updater.png\" --text-align=\"center\" --text=\"\rUne mise à jour de <b>convert2hdlight.c.1m.sh</b> a été detectée.\r\rVersion locale: <b>$local_version</b>\rVersion distante: <b>$pastebin_version</b>\r\r<b>Installation de la mise à jour...</b>\r\" --auto-kill --auto-close" >> ~/convert2hdlight-update.sh  echo "75"
+  echo "yad --undecorated --width=500 --progress --center --no-buttons --no-escape --skip-taskbar --image=\"$HOME/.config/argos/.cache-icons/updater.png\" --text-align=\"center\" --text=\"\rUne mise à jour de <b>convert2hdlight.c.1s.sh</b> a été detectée.\r\rVersion locale: <b>$local_version</b>\rVersion distante: <b>$pastebin_version</b>\r\r<b>Installation de la mise à jour...</b>\r\" --auto-kill --auto-close" >> ~/convert2hdlight-update.sh  echo "75"
   echo "# Lancement de l'updater." ; sleep 2
   bash ~/convert2hdlight-update.sh
   exit 1
 ) |
-yad --undecorated --width=500 --progress --center --no-buttons --no-escape --skip-taskbar --image="$HOME/.config/argos/.cache-icons/updater.png" --text-align="center" --text="\rUne mise à jour de <b>convert2hdlight.c.1m.sh</b> a été detectée.\r\rVersion locale: <b>$local_version</b>\rVersion distante: <b>$pastebin_version</b>\r\r<b>Installation de la mise à jour...</b>\r" --auto-kill --auto-close
+yad --undecorated --width=500 --progress --center --no-buttons --no-escape --skip-taskbar --image="$HOME/.config/argos/.cache-icons/updater.png" --text-align="center" --text="\rUne mise à jour de <b>convert2hdlight.c.1s.sh</b> a été detectée.\r\rVersion locale: <b>$local_version</b>\rVersion distante: <b>$pastebin_version</b>\r\r<b>Installation de la mise à jour...</b>\r" --auto-kill --auto-close
 fi
 
 #### Vérification du cache des icones (ou création)
