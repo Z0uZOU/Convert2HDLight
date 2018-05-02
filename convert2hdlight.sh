@@ -15,7 +15,7 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.36" #base du système de mise à jour
+version="Version: 0.0.1.37" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_pastebin="https://pastebin.com/raw/vJpabVtT" #emplacement du changelog de ce script
@@ -27,6 +27,7 @@ script_cron="0 * * * *" #ne définir que la planification
 verification_process="HandBrakeCLI" #si ces process sont détectés on ne notifie pas (ou ne lance pas en doublon)
 mon_fichier_json_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/hdlight-encode.json" #lien vers le fichier json, fichier nécessaire pour la conversion
 mon_script_argos_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/Argos/convert2hdlight.c.1s.sh" #lien vers le script Argos
+lien_filebot="https://github.com/Z0uZOU/Convert2HDLight/tree/master/FileBot" #lien vers l'installer de filebot 
 ########################
  
 #### Vérification que le script possède les droits root
@@ -164,6 +165,7 @@ if [[ "$1" == "--help" ]]; then
   echo "  --help                  Affiche ce menu"
   echo "  --stop-convert          Stoppe le programme après la fin de la conversion en cours"
   echo "  --ignore-range          Permet d'ignorer le fichier \"range.conf\""
+  echo "  --ignore-renommage      Permet d'ignorer le renommage du fichier par FileBot"
   echo ""
   echo -e "\e[4mUtilisation avancée:\e[0m"
   echo "  --purge-log             Purge définitivement les logs générés par --extra-log"
@@ -179,6 +181,12 @@ if [[ "$@" =~ "--ignore-range" ]] ; then
   ignore_range="oui"
 else
   ignore_range="non"
+fi
+  
+if [[ "$@" =~ "--ignore-renommage" ]] ; then
+  ignore_renommage="oui"
+else
+  ignore_renommage="non"
 fi
   
 #### je dois charger le fichier conf ici ou trouver une solution (script_url et maj_force)
@@ -473,7 +481,7 @@ for tools_pip in $required_tools_pip ; do
 done
 
 #### Vérification de FileBot
-wget -O- -q https://sourceforge.net/projects/filebot/files/filebot/ > $dossier_config/filebot.txt &
+wget -O- -q $lien_filebot > $dossier_config/filebot.txt &
 pid=$!
 spin='-\|/'
 i=0
@@ -484,26 +492,12 @@ do
   sleep .1
 done
 printf "$mon_printf" && printf "\r"
-filebot_distant=` cat $dossier_config/filebot.txt | grep "FileBot_" | sed -n '1p' | sed 's/.*FileBot_//' | sed 's/\" class.*//'`
-rm -f $dossier_config/filebot.txt
+filebot_distant=`cat $dossier_config/filebot.txt `| grep "filebot_" | sed -n '1p' | sed 's/.*filebot_//' | sed 's/_amd64.deb<\/a><\/span>.*//'`
 filebot_local=`filebot -version | awk '{print $2}' 2>/dev/null`
 if [[ "$filebot_local" != "$filebot_distant" ]]; then
-  echo -e "[\e[41m\u2717 \e[0m] Mise à jour de FileBot disponible ("$filebot_distant")"
   useless="1"
-  wget -O- -q "https://sourceforge.net/projects/filebot/files/filebot/FileBot_$filebot_distant/" > $dossier_config/filebot_lien_download.txt &
-  pid=$!
-  spin='-\|/'
-  i=0
-  while kill -0 $pid 2>/dev/null
-  do
-    i=$(( (i+1) %4 ))
-    printf "\rRécupération des informations de la dernière version de FileBot... ${spin:$i:1}"
-    sleep .1
-  done
-  printf "$mon_printf" && printf "\r"
-  filebot_lien_download=`cat $dossier_config/filebot_lien_download.txt | grep -Eo "(http|https)://[a-zA-Z0-9./?=_-]*" | grep "amd64.deb" | sed -n '1p'`
-  rm -f $dossier_config/filebot_lien_download.txt
-  wget -q -O filebot.deb "$filebot_lien_download" &
+  filebot_lien_download=`cat $dossier_config/filebot.txt | grep "filebot_$filebot_distant" | sed -n '1p' | sed 's/.*href=\"\///' | sed 's/\">.*//'`
+  wget -q -O filebot.deb "https://github.com/$filebot_lien_download" &
   pid=$!
   spin='-\|/'
   i=0
@@ -530,6 +524,7 @@ if [[ "$filebot_local" != "$filebot_distant" ]]; then
 else
   echo -e "[\e[42m\u2713 \e[0m] La dépendance: filebot est installée ("$filebot_local")"
 fi
+rm -f $dossier_config/filebot.txt
  
 #### Ajout de ce script dans le menu
 if [[ -f "/etc/xdg/menus/applications-merged/scripts-scoony.menu" ]] ; then
@@ -608,7 +603,7 @@ chemin_argos=`locate "/.config/argos/" | sed '/\/home\//!d' | sed 's/\/.config.*
 if [[ "$chemin_argos" != "" ]]; then
   chemin_argos+="/.config/argos"
   if [[ ! -f "$chemin_argos/convert2hdlight.c.1s.sh" ]]; then
-    wget -q mon_script_argos_github -O $chemin_argos/convert2hdlight.c.1s.sh && sed -i -e 's/\r//g' $chemin_argos/convert2hdlight.c.1s.sh && chmod 777 $chemin_argos/convert2hdlight.c.1s.sh && chmod -x $chemin_argos/convert2hdlight.c.1s.sh
+    wget -q $mon_script_argos_github -O $chemin_argos/convert2hdlight.c.1s.sh && sed -i -e 's/\r//g' $chemin_argos/convert2hdlight.c.1s.sh && chmod 777 $chemin_argos/convert2hdlight.c.1s.sh && chmod -x $chemin_argos/convert2hdlight.c.1s.sh
   else
     if [[ -x "$chemin_argos/convert2hdlight.c.1s.sh" ]]; then
       chmod -x $chemin_argos/convert2hdlight.c.1s.sh
