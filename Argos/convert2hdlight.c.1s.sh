@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-version="0.0.0.22"
+version="0.0.0.23"
 
 #### Nettoyage
 if [[ -f "~/convert2hdlight-update.sh" ]]; then
@@ -178,7 +178,6 @@ if [[ $title != "Encodage terminé" ]] && [[ $title != "..." ]] && [[ $title != 
   #size_folder_out=`humanise $size_folder_out`
 else
   echo " ... | image='$CONVERT2HDLIGHT_ICON' imageWidth=25"
-  chmod -x $HOME/.config/argos/convert2hdlight.c.1s.sh
   exit 1
 fi
 
