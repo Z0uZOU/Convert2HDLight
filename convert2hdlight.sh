@@ -15,7 +15,7 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.38" #base du système de mise à jour
+version="Version: 0.0.1.39" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_pastebin="https://pastebin.com/raw/vJpabVtT" #emplacement du changelog de ce script
@@ -165,7 +165,7 @@ if [[ "$1" == "--help" ]]; then
   echo "  --help                  Affiche ce menu"
   echo "  --stop-convert          Stoppe le programme après la fin de la conversion en cours"
   echo "  --ignore-range          Permet d'ignorer le fichier \"range.conf\""
-  echo "  --ignore-renommage      Permet d'ignorer le renommage du fichier par FileBot"
+  echo "  --ignore-filebot        Permet d'ignorer le renommage du fichier par FileBot"
   echo ""
   echo -e "\e[4mUtilisation avancée:\e[0m"
   echo "  --purge-log             Purge définitivement les logs générés par --extra-log"
@@ -183,10 +183,10 @@ else
   ignore_range="non"
 fi
   
-if [[ "$@" =~ "--ignore-renommage" ]] ; then
-  ignore_renommage="oui"
+if [[ "$@" =~ "--ignore-filebot" ]] ; then
+  ignore_filebot="oui"
 else
-  ignore_renommage="non"
+  ignore_filebot="non"
 fi
   
 #### je dois charger le fichier conf ici ou trouver une solution (script_url et maj_force)
@@ -884,10 +884,6 @@ if [[ "$mes_medias" != "" ]] ; then
             echo "$film_note" > $chemin_argos/convert2hdlight/temp/film_note.txt
             echo "$film_origine" > $chemin_argos/convert2hdlight/temp/film_origine.txt
             #echo "$film_synopsis" > $chemin_argos/convert2hdlight/temp/film_synopsis.txt
-            attention_vide="0"
-            if [[ "$film_titre_en" == "" ]] && [[ "$film_titre_fr" == "" ]]; then
-              attention_vide="1"
-            fi
           fi
           rm -f $dossier_config/mediainfo.txt
         else
@@ -1058,6 +1054,35 @@ if [[ "$mes_medias" != "" ]] ; then
           echec_conversion="0"
           if [[ "$mediainfo_duree" == "$mediainfo_duree_enc" ]]; then
             eval 'echo -e "[..... |\e[42m CONVERSION REUSSIE, REMPLACEMENT ET MISE EN PLACE \e[0m|"' $mon_log_perso
+            if [[ "ignore_filebot" == "non" ]]; then
+              if [[ "$categorie" == "Film" ]]; then
+                agent="TheMovieDB"
+                format="movieFormat"
+                output="{n} ({y})"
+              else
+                agent="TheTVDB"
+                format="seriesFormat"
+                output="{n} - {sxe} - {t}"
+              fi
+              mv "$dossier_cible/$fichier-part" "$dossier_cible/$fichier"
+              filebot -script fn:amc --db $agent -non-strict --conflict override --lang fr --encoding UTF-8 --mode rename "$dossier_cible/$fichier" --def "$format=$output" > $dossier_config/traitement.txt 2>/dev/null &
+              pid=$!
+              spin='-\|/'
+              i=0
+              while kill -0 $pid 2>/dev/null
+              do
+                i=$(( (i+1) %4 ))
+                printf "\r[..... |\e[42m FILEBOT  \e[0m| Renommage du fichier... ${spin:$i:1}"
+                sleep .1
+              done
+              printf "$mon_printf" && printf "\r"
+              sed -i '/MOVE/!d' $dossier_config/traitement.txt
+              fichier_filebot=`cat $dossier_config/traitement.txt | grep "MOVE" | cut -d'[' -f4 | sed 's/].*//g'`
+              fichier=`basename "$fichier_filebot"`
+              eval 'echo -e "[..... |\e[42m FILEBOT  \e[0m| Renommage du fichier en : $fichier"' $mon_log_perso
+              mv "$dossier_cible/$fichier" "$dossier_cible/$fichier-part"
+              rm -f traitement.txt
+            fi
             if [[ "$categorie" == "Film" ]]; then
               if [[ "$filebot_films_hd" != "" ]]; then
                 if [[ ! -d "$filebot_films_hd" ]]; then mkdir -p "$filebot_films_hd"; fi
@@ -1074,8 +1099,7 @@ if [[ "$mes_medias" != "" ]] ; then
                   eval 'echo -e "[..... |\e[42m VERS "$dossier_cible"/Films \e[0m|"' $mon_log_perso
                 fi
               fi
-            fi
-            if [[ "$categorie" == "Série" ]]; then
+            else
               if [[ "$filebot_series_dvdrip" != "" ]]; then
                 if [[ ! -d "$filebot_series_dvdrip" ]]; then mkdir -p "$filebot_series_dvdrip";  fi
                 mv "$dossier_cible/$fichier-part" "$filebot_series_dvdrip/$fichier"
