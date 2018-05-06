@@ -19,7 +19,7 @@ version="Version: 0.0.1.39" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_pastebin="https://pastebin.com/raw/vJpabVtT" #emplacement du changelog de ce script
-icone_imgur="http://i.imgur.com/OymcuTl.png" #emplacement de l'icône du script
+icone_github="https://github.com/Z0uZOU/Convert2HDLight/raw/master/.cache-icons/convert2hdlight.png" #emplacement de l'icône du script
 required_repos="ppa:neurobin/ppa ppa:webupd8team/java ppa:stebbins/handbrake-releases" #ajout de repository
 required_tools="oracle-java8-installer handbrake-cli trash-cli curl mlocate lm-sensors shc mediainfo" #dépendances du script
 required_tools_pip="" #dépendances du script (PIP)
@@ -573,7 +573,7 @@ fi
 if [[ -f "/usr/local/share/applications/$mon_script_desktop" ]] ; then
   useless=1
 else
-  wget -q $icone_imgur -O /usr/share/icons/$mon_script_base.png
+  wget -q $icone_github -O /usr/share/icons/$mon_script_base.png
   if [[ -d "/usr/local/share/applications" ]]; then
     useless="1"
   else
