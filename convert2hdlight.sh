@@ -117,7 +117,7 @@ if [[ "$1" == "--desactive-lock" ]]; then
   echo "Système de lock désactivé"
   exit 1
 fi
-if [[ "$1" == "--extra-log" ]] || [[ "$2" == "--extra-log" ]]; then
+if [[ "$@" == "--extra-log" ]]; then
   date_log=`date +%Y%m%d`
   heure_log=`date +%H%M`
   path_log=`echo "/root/.config/"$mon_script_base"/log/"$date_log`
