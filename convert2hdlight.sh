@@ -148,7 +148,7 @@ fi
 if [[ "$1" == "--help" ]]; then
   echo -e "\e[1m$mon_script_base_maj\e[0m ($version)"
   echo "Objectif du programme: $description"
-  echo "Auteur: ZouZOU <adrien.fronteau@gmail.com>"
+  echo "Auteur: Z0uZOU <zouzou.is.reborn@hotmail.fr>"
   echo ""
   echo "Utilisation: \"$mon_script_fichier [--option]\""
   echo ""
