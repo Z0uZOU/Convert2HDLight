@@ -15,7 +15,7 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.44" #base du système de mise à jour
+version="Version: 0.0.1.45" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_pastebin="https://pastebin.com/raw/vJpabVtT" #emplacement du changelog de ce script
@@ -80,17 +80,12 @@ if [[ "$1" == "--version" ]]; then
   echo "$version"
   exit 1
 fi
-if [[ "$1" == "--changelog" ]]; then
-  wget -q -O- $changelog_pastebin
-  echo ""
-  exit 1
+if [[ "$1" == "--debug" ]] || [[ "$2" == "--debug" ]] || [[ "$3" == "--debug" ]] || [[ "$4" == "--debug" ]]; then
+  debug="yes"
 fi
 if [[ "$1" == "--edit-config" ]]; then
   nano $mon_script_config
   exit 1
-fi
-if [[ "$1" == "--debug" ]] || [[ "$2" == "--debug" ]] || [[ "$3" == "--debug" ]] || [[ "$4" == "--debug" ]]; then
-  debug="yes"
 fi
 if [[ "$1" == "--efface-lock" ]]; then
   mon_lock=`echo "/root/.config/"$mon_script_base"/lock-"$mon_script_base`
@@ -145,7 +140,26 @@ if [[ "$1" == "--purge-log" ]]; then
   fi
   exit 1
 fi
+if [[ "$1" == "--changelog" ]]; then
+  wget -q -O- $changelog_pastebin
+  echo ""
+  exit 1
+fi
+if [[ "$1" == --message=* ]]; then
+  source $mon_script_config
+  message=`echo "$1" | sed 's/--message=//g'`
+  curl -s \
+    --form-string "token=arocr9cyb3x5fdo7i4zy7e99da6hmx" \
+    --form-string "user=uauyi2fdfiu24k7xuwiwk92ovimgto" \
+    --form-string "title=$mon_script_base_maj MESSAGE" \
+    --form-string "message=$message" \
+    --form-string "html=1" \
+    --form-string "priority=0" \
+    https://api.pushover.net/1/messages.json > /dev/null
+  exit 1
+fi
 if [[ "$1" == "--help" ]]; then
+  path_log=`echo "/root/.config/"$mon_script_base"/log/"$date_log`
   echo -e "\e[1m$mon_script_base_maj\e[0m ($version)"
   echo "Objectif du programme: $description"
   echo "Auteur: Z0uZOU <zouzou.is.reborn@hotmail.fr>"
@@ -155,6 +169,7 @@ if [[ "$1" == "--help" ]]; then
   echo -e "\e[4mOptions:\e[0m"
   echo "  --version               Affiche la version de ce programme"
   echo "  --edit-config           Édite la configuration de ce programme"
+  echo "  --extra-log             Génère un log à chaque exécution dans "$path_log
   echo "  --debug                 Lance ce programme en mode debug"
   echo "  --efface-lock           Supprime le fichier lock qui empêche l'exécution"
   echo "  --statut-lock           Affiche le statut de la vérification de process doublon"
@@ -167,7 +182,10 @@ if [[ "$1" == "--help" ]]; then
   echo "  --ignore-range          Permet d'ignorer le fichier \"range.conf\""
   #echo "  --ignore-filebot        Permet d'ignorer le renommage du fichier par FileBot"
   echo ""
+  echo "Les options \"--debug\" et \"--extra-log\" sont cumulables"
+  echo ""
   echo -e "\e[4mUtilisation avancée:\e[0m"
+  echo "  --message=\"...\"         Envoie un message push au développeur (urgence uniquement)"
   echo "  --purge-log             Purge définitivement les logs générés par --extra-log"
   echo "  --purge-process         Tue tout les processus générés par ce programme"
   echo ""
@@ -177,7 +195,7 @@ if [[ "$1" == "--help" ]]; then
   exit 1
 fi
  
-if [[ "$1" =~ "--ignore-range" ]] || [[ "$2" =~ "--ignore-range" ]] || [[ "$3" =~ "--ignore-range" ]]; then
+if [[ "$1" =~ "--ignore-range" ]] || [[ "$2" =~ "--ignore-range" ]] || [[ "$3" =~ "--ignore-range" ]] || [[ "$4" =~ "--ignore-range" ]]; then
   ignore_range="oui"
 else
   ignore_range="non"
