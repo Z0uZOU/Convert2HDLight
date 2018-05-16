@@ -15,7 +15,7 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.42" #base du système de mise à jour
+version="Version: 0.0.1.43" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_pastebin="https://pastebin.com/raw/vJpabVtT" #emplacement du changelog de ce script
@@ -165,7 +165,7 @@ if [[ "$1" == "--help" ]]; then
   echo "  --help                  Affiche ce menu"
   echo "  --stop-convert          Stoppe le programme après la fin de la conversion en cours"
   echo "  --ignore-range          Permet d'ignorer le fichier \"range.conf\""
-  echo "  --ignore-filebot        Permet d'ignorer le renommage du fichier par FileBot"
+  #echo "  --ignore-filebot        Permet d'ignorer le renommage du fichier par FileBot"
   echo ""
   echo -e "\e[4mUtilisation avancée:\e[0m"
   echo "  --purge-log             Purge définitivement les logs générés par --extra-log"
@@ -183,11 +183,11 @@ else
   ignore_range="non"
 fi
   
-if [[ "$@" =~ "--ignore-filebot" ]] ; then
-  ignore_filebot="oui"
-else
-  ignore_filebot="non"
-fi
+#if [[ "$@" =~ "--ignore-filebot" ]] ; then
+#  ignore_filebot="oui"
+#else
+#  ignore_filebot="non"
+#fi
 ignore_filebot="oui"
   
 #### je dois charger le fichier conf ici ou trouver une solution (script_url et maj_force)
