@@ -89,7 +89,7 @@ if [[ "$1" == "--edit-config" ]]; then
   nano $mon_script_config
   exit 1
 fi
-if [[ "$@" == "--debug" ]]; then
+if [[ "$1" == "--debug" ]] || [[ "$2" == "--debug" ]] || [[ "$3" == "--debug" ]] || [[ "$4" == "--debug" ]]; then
   debug="yes"
 fi
 if [[ "$1" == "--efface-lock" ]]; then
@@ -117,7 +117,7 @@ if [[ "$1" == "--desactive-lock" ]]; then
   echo "Système de lock désactivé"
   exit 1
 fi
-if [[ "$1" == "--extra-log" ]] || [[ "$2" == "--extra-log" ]] || [[ "$3" == "--extra-log" ]]; then
+if [[ "$1" == "--extra-log" ]] || [[ "$2" == "--extra-log" ]] || [[ "$3" == "--extra-log" ]] || [[ "$4" == "--extra-log" ]]; then
   date_log=`date +%Y%m%d`
   heure_log=`date +%H%M`
   path_log=`echo "/root/.config/"$mon_script_base"/log/"$date_log`
