@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-version="0.0.0.24"
+version="0.0.0.25"
 
 #### Nettoyage
 if [[ -f "~/convert2hdlight-update.sh" ]]; then
@@ -248,7 +248,7 @@ if [[ "$file" != "" ]]; then
   printf "%-2s \u251c\u2500 \e[1m%-13s\e[0m : %s | ansi=true font='Ubuntu Mono' trim=false \n" "" "Duree" "$mediainfo_duree min"
   printf "%-2s \u251c\u2500 \e[1m%-13s\e[0m : %s | ansi=true font='Ubuntu Mono' trim=false \n" "" "Langue" "$mediainfo_langue"
   printf "%-2s \u251c\u2500 \e[1m%-13s\e[0m : %s | ansi=true font='Ubuntu Mono' trim=false \n" "" "Source" "$folder_in ($size_folder_in)"
-  printf "%-2s \u2514\u2500 \e[1m%-13s\e[0m : %s | ansi=true font='Ubuntu Mono' trim=false \n" "" "Destination" "$folder_out ($size_folder_out)"
+  printf "%-2s \u2514\u2500 \e[1m%-13s\e[0m : %s | ansi=true font='Ubuntu Mono' trim=false bash=\"nemo $folder_out\" terminal=false \n" "" "Destination" "$folder_out ($size_folder_out)"
   if [[ "$attention_vide" == "0" ]]; then
     if [[ "$categorie" == "Série" ]]; then
       if [[ "$serie_nom_fr" != "" ]]; then
