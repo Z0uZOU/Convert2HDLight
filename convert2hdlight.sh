@@ -15,7 +15,7 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.47" #base du système de mise à jour
+version="Version: 0.0.1.48" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_pastebin="https://pastebin.com/raw/vJpabVtT" #emplacement du changelog de ce script
@@ -371,28 +371,28 @@ if [[ "$1" == "--maj-uniquement" ]]; then
 fi
  
 #### Vérification de la conformité du cron
-crontab -l > mon_cron.txt
-cron_path=`cat mon_cron.txt | grep "PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin"`
+crontab -l > mon_cron_$mon_script_base.txt
+cron_path=`cat mon_cron_$mon_script_base.txt | grep "PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin"`
 if [[ "$cron_path" == "" ]]; then
-  sed -i '1iPATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin' mon_cron.txt
+  sed -i '1iPATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin' mon_cron_$mon_script_base.txt
   cron_a_appliquer="oui"
 fi
-cron_lang=`cat mon_cron.txt | grep "LANG=fr_FR.UTF-8"`
+cron_lang=`cat mon_cron_$mon_script_base.txt | grep "LANG=fr_FR.UTF-8"`
 if [[ "$cron_lang" == "" ]]; then
-  sed -i '1iLANG=fr_FR.UTF-8' mon_cron.txt
+  sed -i '1iLANG=fr_FR.UTF-8' mon_cron_$mon_script_base.txt
   cron_a_appliquer="oui"
 fi
-cron_variable=`cat mon_cron.txt | grep "CRON_SCRIPT=\"oui\""`
+cron_variable=`cat mon_cron_$mon_script_base.txt | grep "CRON_SCRIPT=\"oui\""`
 if [[ "$cron_variable" == "" ]]; then
-  sed -i '1iCRON_SCRIPT="oui"' mon_cron.txt
+  sed -i '1iCRON_SCRIPT="oui"' mon_cron_$mon_script_base.txt
   cron_a_appliquer="oui"
 fi
 if [[ "$cron_a_appliquer" == "oui" ]]; then
-  crontab mon_cron.txt
-  rm -f mon_cron.txt
+  crontab mon_cron_$mon_script_base.txt
+  rm -f mon_cron_$mon_script_base.txt
   eval 'echo "-- Cron mis en conformité"' $mon_log_perso
 else
-  rm -f mon_cron.txt
+  rm -f mon_cron_$mon_script_base.txt
 fi
  
 #### Mise en place éventuelle d'un cron
@@ -404,10 +404,10 @@ if [[ "$script_cron" != "" ]]; then
     eval 'echo "-- Création..."' $mon_log_perso
     ajout_cron=`echo -e "$script_cron\t\t/opt/scripts/$mon_script_fichier > /var/log/$mon_script_log 2>&1"`
     eval 'echo "-- Mise en place dans le cron..."' $mon_log_perso
-    crontab -l > mon_cron.txt
-    echo -e "$ajout_cron" >> mon_cron.txt
-    crontab mon_cron.txt
-    rm -f mon_cron.txt
+    crontab -l > mon_cron_$mon_script_base.txt
+    echo -e "$ajout_cron" >> mon_cron_$mon_script_base.txt
+    crontab mon_cron_$mon_script_base.txt
+    rm -f mon_cron_$mon_script_base.txt
     eval 'echo "-- Cron mis à jour"' $mon_log_perso
   else
     eval 'echo -e "\e[101mLE SCRIPT EST PRÉSENT DANS LE CRON\e[0m"' $mon_log_perso
@@ -440,6 +440,7 @@ dossier_source="/home/sdc1/Handbrake/A_Convertir"
 ## Cibles
 dossier_cible="/home/sdc1/Handbrake/Converti"
 dossier_cible_erreur="/home/sdc1/Handbrake/Erreur"
+dossier_cible_media_3D="/mnt/sdc1/Handbrake/Media_3D"
 dossier_filebot_films="/home/sdc1/Downloads/Films_Hdlight"
 dossier_filebot_series="/home/sdc1/Downloads/Séries_HQ"
  
@@ -971,7 +972,10 @@ if [[ "$mes_medias" != "" ]] ; then
       eval 'echo -e "[..... |\e[7m ORIGINAL \e[0m| résolution : $mediainfo_resolution ($mediainfo_codec - $mediainfo_bitrate)"' $mon_log_perso
       eval 'echo -e "[..... |\e[7m ORIGINAL \e[0m| langue(s) : $mediainfo_langue_clean ($mediainfo_langue_codec_clean)"' $mon_log_perso
       if [[ "$mediainfo_3d" != "" ]]; then
+        if [[ ! -d "$dossier_cible_media_3D" ]]; then mkdir -p "$dossier_cible_media_3D"; fi
+        mv "$mon_media" "$dossier_cible_media_3D/$fichier"
         eval 'echo -e "[..... MÉDIA 3D DÉTECTÉ, MEDIA IGNORÉ"' $mon_log_perso
+        eval 'echo -e "[..... |\e[41m LE FICHIER EST DÉPLACÉ VERS "$dossier_cible_media_3D" \e[0m|"' $mon_log_perso
         push_message=`echo -e "Le média 3D $fichier ($categorie) ne sera pas converti."`
         if [[ "$push_apres_conversion" == "oui" ]] ; then
           for user in {1..10}; do
