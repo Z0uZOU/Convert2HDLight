@@ -15,7 +15,7 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.48" #base du système de mise à jour
+version="Version: 0.0.1.49" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_pastebin="https://pastebin.com/raw/vJpabVtT" #emplacement du changelog de ce script
@@ -793,7 +793,7 @@ if [[ "$mes_medias" != "" ]] ; then
     taille_1=`ls -al  "$mon_media" | awk '{print $5}'`
     sleep .5
     taille_2=`ls -al  "$mon_media" | awk '{print $5}'`
-    if [[ "$taille_1" == "$taille_2" ]]; then
+    if [[ "$taille_1" == "$taille_2" ]] && [[ -f "$mon_media" ]]; then
       fichier=$(basename "$mon_media")
       test_serie=`echo $fichier | tr [:upper:] [:lower:] | grep -E "s[0-9][0-9]e[0-9][0-9]|s[0-9]e[0-9][0-9]|- [0-9]x[0-9][0-9] -|- [0-9][0-9]x[0-9][0-9] -|- [0-9]x[0-9][0-9]-[0-9][0-9] -|- [0-9][0-9]x[0-9][0-9]-[0-9][0-9] -"`
       if [[ $test_serie != "" ]] ; then
@@ -1203,7 +1203,11 @@ if [[ "$mes_medias" != "" ]] ; then
         fi
       fi
     else
-      echo -e "[\e[41m\u2717 \e[0m] Le fichier "$mon_media" est ignoré (en cours de copie/déplacement)"
+      if [[ ! -f "$mon_media" ]]; then
+        eval 'echo -e "[\e[41m\u2717 \e[0m] Le fichier "$mon_media" est ignoré (supprimé)"' $mon_log_perso
+      else
+        eval 'echo -e "[\e[41m\u2717 \e[0m] Le fichier "$mon_media" est ignoré (en cours de copie/déplacement)"' $mon_log_perso
+      fi
     fi
     if [[ -f "/root/.config/convert2hdlight/.stop-convert" ]]; then
       eval 'echo -e "[..... |\e[41m /\e[43m!\e[41m\ ARRÊT DU SCRIPT /\e[43m!\e[41m\ \e[0m|"' $mon_log_perso
