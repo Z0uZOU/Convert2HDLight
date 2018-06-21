@@ -14,7 +14,7 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.50" #base du système de mise à jour
+version="Version: 0.0.1.51" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_pastebin="https://pastebin.com/raw/vJpabVtT" #emplacement du changelog de ce script
@@ -352,7 +352,7 @@ if [[ "$compare" != "" ]] ; then
   if [[ "$mon_script_fichier" =~ \.sh$ ]]; then
     echo "mv $mon_script_fichier_temp $mon_script_fichier" >> $mon_script_updater
     echo "chmod +x $mon_script_fichier" >> $mon_script_updater
-    echo "bash $mon_script_fichier $1 $2" >> $mon_script_updater
+    echo "bash $mon_script_fichier $@" >> $mon_script_updater
   else
     echo "shc -f $mon_script_fichier_temp -o $mon_script_fichier" >> $mon_script_updater
     echo "rm -f $mon_script_fichier_temp" >> $mon_script_updater
@@ -360,7 +360,7 @@ if [[ "$compare" != "" ]] ; then
     echo "rm -f *.x.c" >> $mon_script_updater
     echo "chmod +x $mon_script_fichier" >> $mon_script_updater
     echo "echo mise à jour mise en place" >> $mon_script_updater
-    echo "./$mon_script_fichier $1 $2" >> $mon_script_updater
+    echo "./$mon_script_fichier $@" >> $mon_script_updater
   fi
   echo "exit 1" >> $mon_script_updater
   rm "$pid_script"
