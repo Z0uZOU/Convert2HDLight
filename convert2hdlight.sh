@@ -7,7 +7,6 @@
 # prendre en charge les petits fichiers (handbrake)
 # quand filebot pas installé ./convert2hdlight.sh: ligne 547: filebot : commande introuvable
 # Ne pas encoder de la merde, 720p ou 1080p DVDRiP uniquement
-# ajouter --force pour forcer un encodage et faire sauter les securité
  
 ########################
 ## Script de Z0uZOU
@@ -15,7 +14,7 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.49" #base du système de mise à jour
+version="Version: 0.0.1.50" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_pastebin="https://pastebin.com/raw/vJpabVtT" #emplacement du changelog de ce script
@@ -80,7 +79,7 @@ if [[ "$1" == "--version" ]]; then
   echo "$version"
   exit 1
 fi
-if [[ "$1" == "--debug" ]] || [[ "$2" == "--debug" ]] || [[ "$3" == "--debug" ]] || [[ "$4" == "--debug" ]]; then
+if [[ "$1" == "--debug" ]] || [[ "$2" == "--debug" ]] || [[ "$3" == "--debug" ]] || [[ "$4" == "--debug" ]] || [[ "$5" == "--debug" ]]; then
   debug="yes"
 fi
 if [[ "$1" == "--edit-config" ]]; then
@@ -112,7 +111,7 @@ if [[ "$1" == "--desactive-lock" ]]; then
   echo "Système de lock désactivé"
   exit 1
 fi
-if [[ "$1" == "--extra-log" ]] || [[ "$2" == "--extra-log" ]] || [[ "$3" == "--extra-log" ]] || [[ "$4" == "--extra-log" ]]; then
+if [[ "$1" == "--extra-log" ]] || [[ "$2" == "--extra-log" ]] || [[ "$3" == "--extra-log" ]] || [[ "$4" == "--extra-log" ]] || [[ "$5" == "--extra-log" ]]; then
   date_log=`date +%Y%m%d`
   heure_log=`date +%H%M`
   path_log=`echo "/root/.config/"$mon_script_base"/log/"$date_log`
@@ -181,8 +180,9 @@ if [[ "$1" == "--help" ]]; then
   echo "  --stop-convert          Stoppe le programme après la fin de la conversion en cours"
   echo "  --ignore-range          Permet d'ignorer le fichier \"range.conf\""
   #echo "  --ignore-filebot        Permet d'ignorer le renommage du fichier par FileBot"
+  echo "  --force-encodage        Permet de force l'encodage si le média détecté est en 3D"
   echo ""
-  echo "Les options \"--debug\", \"--extra-log\" et \"--ignore-range\" sont cumulables"
+  echo "Les options \"--debug\", \"--extra-log\", \"--ignore-range\" et \"--force-encodage\" sont cumulables"
   echo ""
   echo -e "\e[4mUtilisation avancée:\e[0m"
   echo "  --message=\"...\"         Envoie un message push au développeur (urgence uniquement)"
@@ -195,7 +195,7 @@ if [[ "$1" == "--help" ]]; then
   exit 1
 fi
  
-if [[ "$1" =~ "--ignore-range" ]] || [[ "$2" =~ "--ignore-range" ]] || [[ "$3" =~ "--ignore-range" ]] || [[ "$4" =~ "--ignore-range" ]]; then
+if [[ "$1" =~ "--ignore-range" ]] || [[ "$2" =~ "--ignore-range" ]] || [[ "$3" =~ "--ignore-range" ]] || [[ "$4" =~ "--ignore-range" ]] || [[ "$5" =~ "--ignore-range" ]]; then
   ignore_range="oui"
 else
   ignore_range="non"
@@ -207,7 +207,13 @@ fi
 #  ignore_filebot="non"
 #fi
 ignore_filebot="oui"
-  
+ 
+if [[ "$1" =~ "--force-encodage" ]] || [[ "$2" =~ "--force-encodage" ]] || [[ "$3" =~ "--force-encodage" ]] || [[ "$4" =~ "--force-encodage" ]] || [[ "$5" =~ "--force-encodage" ]]; then
+  force_encodage="oui"
+else
+  force_encodage="non"
+fi
+ 
 #### je dois charger le fichier conf ici ou trouver une solution (script_url et maj_force)
 dossier_config=`echo "/root/.config/"$mon_script_base`
 if [[ ! -d "$dossier_config" ]]; then
@@ -971,7 +977,7 @@ if [[ "$mes_medias" != "" ]] ; then
       eval 'echo -e "[..... |\e[7m ORIGINAL \e[0m| durée : $mediainfo_duree mn"' $mon_log_perso
       eval 'echo -e "[..... |\e[7m ORIGINAL \e[0m| résolution : $mediainfo_resolution ($mediainfo_codec - $mediainfo_bitrate)"' $mon_log_perso
       eval 'echo -e "[..... |\e[7m ORIGINAL \e[0m| langue(s) : $mediainfo_langue_clean ($mediainfo_langue_codec_clean)"' $mon_log_perso
-      if [[ "$mediainfo_3d" != "" ]]; then
+      if [[ "$mediainfo_3d" != "" ]] && [[ "$force_encodage" == "non" ]]; then
         if [[ ! -d "$dossier_cible_media_3D" ]]; then mkdir -p "$dossier_cible_media_3D"; fi
         mv "$mon_media" "$dossier_cible_media_3D/$fichier"
         eval 'echo -e "[..... MÉDIA 3D DÉTECTÉ, MEDIA IGNORÉ"' $mon_log_perso
@@ -993,6 +999,9 @@ if [[ "$mes_medias" != "" ]] ; then
           done
         fi
       else
+        if [[ "$mediainfo_3d" != "" ]] && [[ "$force_encodage" == "oui" ]]; then
+          eval 'echo -e "[..... MÉDIA 3D DÉTECTÉ, MEDIA NON IGNORÉ (--force-encodage)"' $mon_log_perso
+        fi
         if [[ "$debug" != "yes" ]]; then
           heure_lancement=`date +%H:%M:%S`
           eval 'echo -e "[..... |\e[7m ENCODAGE \e[0m| début de conversion à $heure_lancement"' $mon_log_perso
