@@ -14,7 +14,7 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.51" #base du système de mise à jour
+version="Version: 0.0.1.52" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_pastebin="https://pastebin.com/raw/vJpabVtT" #emplacement du changelog de ce script
@@ -179,10 +179,10 @@ if [[ "$1" == "--help" ]]; then
   echo "  --help                  Affiche ce menu"
   echo "  --stop-convert          Stoppe le programme après la fin de la conversion en cours"
   echo "  --ignore-range          Permet d'ignorer le fichier \"range.conf\""
-  #echo "  --ignore-filebot        Permet d'ignorer le renommage du fichier par FileBot"
+  echo "  --ignore-filebot        Permet d'ignorer le renommage du fichier par FileBot"
   echo "  --force-encodage        Permet de force l'encodage si le média détecté est en 3D"
   echo ""
-  echo "Les options \"--debug\", \"--extra-log\", \"--ignore-range\" et \"--force-encodage\" sont cumulables"
+  echo "Les options \"--debug\", \"--extra-log\", \"--ignore-range\", \"--ignore-filebot\" et \"--force-encodage\" sont cumulables"
   echo ""
   echo -e "\e[4mUtilisation avancée:\e[0m"
   echo "  --message=\"...\"         Envoie un message push au développeur (urgence uniquement)"
@@ -201,7 +201,7 @@ else
   ignore_range="non"
 fi
   
-#if [[ "$@" =~ "--ignore-filebot" ]] ; then
+#if [[ "$1" =~ "--ignore-filebot" ]] || [[ "$2" =~ "--ignore-filebot" ]] || [[ "$3" =~ "--ignore-filebot" ]] || [[ "$4" =~ "--ignore-filebot" ]] || [[ "$5" =~ "--ignore-filebot" ]]; then
 #  ignore_filebot="oui"
 #else
 #  ignore_filebot="non"
