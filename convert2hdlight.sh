@@ -649,8 +649,6 @@ fi
 if [[ "$parametre_source" != "" ]]; then
   dossier_source=$parametre_source
 fi
-echo -e "Dossier source : "$dossier_source
-exit 1
  
 #### Verifications de base
 eval 'echo -e "\e[44m\u2263\u2263  \e[0m \e[44m \e[1mVÉRIFICATIONS DE BASE  \e[0m \e[44m  \e[0m \e[44m \e[0m \e[34m\u2759\e[0m"' $mon_log_perso
