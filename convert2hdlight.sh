@@ -14,7 +14,7 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.53" #base du système de mise à jour
+version="Version: 0.0.1.54" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/Changelog/convert2hdlight" #emplacement du changelog de ce script
@@ -74,145 +74,153 @@ mon_script_log=`echo $mon_script_base".log"`
 mon_script_desktop=`echo $mon_script_base".desktop"`
 mon_script_updater=`echo $mon_script_base"-update.sh"`
  
+#### Initialisation des variables
+ignore_range="non"
+force_encodage="non"
+parametre_source=""
+ 
 #### Tests des arguments
-if [[ "$1" == "--version" ]]; then
-  echo "$version"
-  exit 1
-fi
-if [[ "$1" == "--debug" ]] || [[ "$2" == "--debug" ]] || [[ "$3" == "--debug" ]] || [[ "$4" == "--debug" ]] || [[ "$5" == "--debug" ]]; then
-  debug="yes"
-fi
-if [[ "$1" == "--edit-config" ]]; then
-  nano $mon_script_config
-  exit 1
-fi
-if [[ "$1" == "--efface-lock" ]]; then
-  mon_lock=`echo "/root/.config/"$mon_script_base"/lock-"$mon_script_base`
-  rm -f "$mon_lock"
-  echo "Fichier lock effacé"
-  exit 1
-fi
-if [[ "$1" == "--statut-lock" ]]; then
-  statut_lock=`cat $mon_script_config | grep "maj_force=\"oui\""`
-  if [[ "$statut_lock" == "" ]]; then
-    echo "Système de lock activé"
-  else
-    echo "Système de lock désactivé"
+for parametre in $@; do
+  if [[ "$parametre" == "--version" ]]; then
+    echo "$version"
+    exit 1
   fi
-  exit 1
-fi
-if [[ "$1" == "--active-lock" ]]; then
-  sed -i 's/maj_force="oui"/maj_force="non"/g' $mon_script_config
-  echo "Système de lock activé"
-  exit 1
-fi
-if [[ "$1" == "--desactive-lock" ]]; then
-  sed -i 's/maj_force="non"/maj_force="oui"/g' $mon_script_config
-  echo "Système de lock désactivé"
-  exit 1
-fi
-if [[ "$1" == "--extra-log" ]] || [[ "$2" == "--extra-log" ]] || [[ "$3" == "--extra-log" ]] || [[ "$4" == "--extra-log" ]] || [[ "$5" == "--extra-log" ]]; then
-  date_log=`date +%Y%m%d`
-  heure_log=`date +%H%M`
-  path_log=`echo "/root/.config/"$mon_script_base"/log/"$date_log`
-  mkdir -p $path_log 2>/dev/null
-  fichier_log_perso=`echo $path_log"/"$heure_log".log"`
-  mon_log_perso="| tee -a $fichier_log_perso"
-fi
-if [[ "$1" == "--purge-process" ]]; then
-  ps aux | grep $mon_script_base | awk '{print $2}' | xargs kill -9
-  echo "Les processus de ce script ont été tués"
-fi
-if [[ "$1" == "--purge-log" ]]; then
-  path_global_log=`echo "/root/.config/"$mon_script_base"/log"`
-  cd $path_global_log
-  mon_chemin=`echo $PWD`
-  if [[ "$mon_chemin" == "$path_global_log" ]]; then
-    printf "Êtes-vous sûr de vouloir effacer l'intégralité des logs de --extra-log? (oui/non) : "
-    read question_effacement
-    if [[ "$question_effacement" == "oui" ]]; then
-      rm -rf *
-      echo "Les logs ont été effacés"
+  if [[ "$parametre" == "--debug" ]]; then
+    debug="yes"
+  fi
+  if [[ "$parametre" == "--edit-config" ]]; then
+    nano $mon_script_config
+    exit 1
+  fi
+  if [[ "$parametre" == "--efface-lock" ]]; then
+    mon_lock=`echo "/root/.config/"$mon_script_base"/lock-"$mon_script_base`
+    rm -f "$mon_lock"
+    echo "Fichier lock effacé"
+    exit 1
+  fi
+  if [[ "$parametre" == "--statut-lock" ]]; then
+    statut_lock=`cat $mon_script_config | grep "maj_force=\"oui\""`
+    if [[ "$statut_lock" == "" ]]; then
+      echo "Système de lock activé"
+    else
+      echo "Système de lock désactivé"
     fi
-  else
-    echo "Une erreur est survenue, veuillez contacter le développeur"
+    exit 1
   fi
-  exit 1
-fi
-if [[ "$1" == "--changelog" ]]; then
-  wget -q -O- $changelog_github
-  echo ""
-  exit 1
-fi
-if [[ "$1" == --message=* ]]; then
-  source $mon_script_config
-  message=`echo "$1" | sed 's/--message=//g'`
-  curl -s \
-    --form-string "token=arocr9cyb3x5fdo7i4zy7e99da6hmx" \
-    --form-string "user=uauyi2fdfiu24k7xuwiwk92ovimgto" \
-    --form-string "title=$mon_script_base_maj MESSAGE" \
-    --form-string "message=$message" \
-    --form-string "html=1" \
-    --form-string "priority=0" \
-    https://api.pushover.net/1/messages.json > /dev/null
-  exit 1
-fi
-if [[ "$1" == "--help" ]]; then
-  path_log=`echo "/root/.config/"$mon_script_base"/log/"$date_log`
-  echo -e "\e[1m$mon_script_base_maj\e[0m ($version)"
-  echo "Objectif du programme: $description"
-  echo "Auteur: Z0uZOU <zouzou.is.reborn@hotmail.fr>"
-  echo ""
-  echo "Utilisation: \"$mon_script_fichier [--option]\""
-  echo ""
-  echo -e "\e[4mOptions:\e[0m"
-  echo "  --version               Affiche la version de ce programme"
-  echo "  --edit-config           Édite la configuration de ce programme"
-  echo "  --extra-log             Génère un log à chaque exécution dans "$path_log
-  echo "  --debug                 Lance ce programme en mode debug"
-  echo "  --efface-lock           Supprime le fichier lock qui empêche l'exécution"
-  echo "  --statut-lock           Affiche le statut de la vérification de process doublon"
-  echo "  --active-lock           Active le système de vérification de process doublon"
-  echo "  --desactive-lock        Désactive le système de vérification de process doublon"
-  echo "  --maj-uniquement        N'exécute que la mise à jour"
-  echo "  --changelog             Affiche le changelog de ce programme"
-  echo "  --help                  Affiche ce menu"
-  echo "  --stop-convert          Stoppe le programme après la fin de la conversion en cours"
-  echo "  --ignore-range          Permet d'ignorer le fichier \"range.conf\""
-  echo "  --ignore-filebot        Permet d'ignorer le renommage du fichier par FileBot"
-  echo "  --force-encodage        Permet de force l'encodage si le média détecté est en 3D"
-  echo ""
-  echo "Les options \"--debug\", \"--extra-log\", \"--ignore-range\", \"--ignore-filebot\" et \"--force-encodage\" sont cumulables"
-  echo ""
-  echo -e "\e[4mUtilisation avancée:\e[0m"
-  echo "  --message=\"...\"         Envoie un message push au développeur (urgence uniquement)"
-  echo "  --purge-log             Purge définitivement les logs générés par --extra-log"
-  echo "  --purge-process         Tue tout les processus générés par ce programme"
-  echo ""
-  echo -e "\e[3m ATTENTION: CE PROGRAMME DOIT ÊTRE EXÉCUTÉ AVEC LES PRIVILÈGES ROOT \e[0m"
-  echo "Des commandes comme les installations de dépendances ou les recherches nécessitent de tels privilèges."
-  echo ""
-  exit 1
-fi
- 
-if [[ "$1" =~ "--ignore-range" ]] || [[ "$2" =~ "--ignore-range" ]] || [[ "$3" =~ "--ignore-range" ]] || [[ "$4" =~ "--ignore-range" ]] || [[ "$5" =~ "--ignore-range" ]]; then
-  ignore_range="oui"
-else
-  ignore_range="non"
-fi
+  if [[ "$parametre" == "--active-lock" ]]; then
+    sed -i 's/maj_force="oui"/maj_force="non"/g' $mon_script_config
+    echo "Système de lock activé"
+    exit 1
+  fi
+  if [[ "$parametre" == "--desactive-lock" ]]; then
+    sed -i 's/maj_force="non"/maj_force="oui"/g' $mon_script_config
+    echo "Système de lock désactivé"
+    exit 1
+  fi
+  if [[ "$parametre" == "--extra-log" ]]; then
+    date_log=`date +%Y%m%d`
+    heure_log=`date +%H%M`
+    path_log=`echo "/root/.config/"$mon_script_base"/log/"$date_log`
+    mkdir -p $path_log 2>/dev/null
+    fichier_log_perso=`echo $path_log"/"$heure_log".log"`
+    mon_log_perso="| tee -a $fichier_log_perso"
+  fi
+  if [[ "$parametre" == "--purge-process" ]]; then
+    ps aux | grep $mon_script_base | awk '{print $2}' | xargs kill -9
+    echo "Les processus de ce script ont été tués"
+  fi
+  if [[ "$parametre" == "--purge-log" ]]; then
+    path_global_log=`echo "/root/.config/"$mon_script_base"/log"`
+    cd $path_global_log
+    mon_chemin=`echo $PWD`
+    if [[ "$mon_chemin" == "$path_global_log" ]]; then
+      printf "Êtes-vous sûr de vouloir effacer l'intégralité des logs de --extra-log? (oui/non) : "
+      read question_effacement
+      if [[ "$question_effacement" == "oui" ]]; then
+        rm -rf *
+        echo "Les logs ont été effacés"
+      fi
+    else
+      echo "Une erreur est survenue, veuillez contacter le développeur"
+    fi
+    exit 1
+  fi
+  if [[ "$parametre" == "--changelog" ]]; then
+    wget -q -O- $changelog_github
+    echo ""
+    exit 1
+  fi
+  if [[ "$parametre" == --message=* ]]; then
+    source $mon_script_config
+    message=`echo "$parametre" | sed 's/--message=//g'`
+    curl -s \
+      --form-string "token=arocr9cyb3x5fdo7i4zy7e99da6hmx" \
+      --form-string "user=uauyi2fdfiu24k7xuwiwk92ovimgto" \
+      --form-string "title=$mon_script_base_maj MESSAGE" \
+      --form-string "message=$message" \
+      --form-string "html=1" \
+      --form-string "priority=0" \
+      https://api.pushover.net/1/messages.json > /dev/null
+    exit 1
+  fi
+  if [[ "$parametre" == "--help" ]]; then
+    path_log=`echo "/root/.config/"$mon_script_base"/log/"$date_log`
+    echo -e "\e[1m$mon_script_base_maj\e[0m ($version)"
+    echo "Objectif du programme: $description"
+    echo "Auteur: Z0uZOU <zouzou.is.reborn@hotmail.fr>"
+    echo ""
+    echo "Utilisation: \"$mon_script_fichier [--option]\""
+    echo ""
+    echo -e "\e[4mOptions:\e[0m"
+    echo "  --version               Affiche la version de ce programme"
+    echo "  --edit-config           Édite la configuration de ce programme"
+    echo "  --extra-log             Génère un log à chaque exécution dans "$path_log
+    echo "  --debug                 Lance ce programme en mode debug"
+    echo "  --efface-lock           Supprime le fichier lock qui empêche l'exécution"
+    echo "  --statut-lock           Affiche le statut de la vérification de process doublon"
+    echo "  --active-lock           Active le système de vérification de process doublon"
+    echo "  --desactive-lock        Désactive le système de vérification de process doublon"
+    echo "  --maj-uniquement        N'exécute que la mise à jour"
+    echo "  --changelog             Affiche le changelog de ce programme"
+    echo "  --help                  Affiche ce menu"
+    echo "  --stop-convert          Stoppe le programme après la fin de la conversion en cours"
+    echo "  --ignore-range          Permet d'ignorer le fichier \"range.conf\""
+    echo "  --ignore-filebot        Permet d'ignorer le renommage du fichier par FileBot"
+    echo "  --force-encodage        Permet de force l'encodage si le média détecté est en 3D"
+    echo "  --source:/emplacement/  Définit l'emplacement de la source des fichiers à convertir"
+    echo ""
+    echo "Les options \"--debug\", \"--extra-log\", \"--ignore-range\", \"--ignore-filebot\", \"--force-encodage\" et \"--source:\" sont cumulables"
+    echo ""
+    echo -e "\e[4mUtilisation avancée:\e[0m"
+    echo "  --message=\"...\"         Envoie un message push au développeur (urgence uniquement)"
+    echo "  --purge-log             Purge définitivement les logs générés par --extra-log"
+    echo "  --purge-process         Tue tout les processus générés par ce programme"
+    echo ""
+    echo -e "\e[3m ATTENTION: CE PROGRAMME DOIT ÊTRE EXÉCUTÉ AVEC LES PRIVILÈGES ROOT \e[0m"
+    echo "Des commandes comme les installations de dépendances ou les recherches nécessitent de tels privilèges."
+    echo ""
+    exit 1
+  fi
   
-#if [[ "$1" =~ "--ignore-filebot" ]] || [[ "$2" =~ "--ignore-filebot" ]] || [[ "$3" =~ "--ignore-filebot" ]] || [[ "$4" =~ "--ignore-filebot" ]] || [[ "$5" =~ "--ignore-filebot" ]]; then
-#  ignore_filebot="oui"
-#else
-#  ignore_filebot="non"
-#fi
-ignore_filebot="oui"
- 
-if [[ "$1" =~ "--force-encodage" ]] || [[ "$2" =~ "--force-encodage" ]] || [[ "$3" =~ "--force-encodage" ]] || [[ "$4" =~ "--force-encodage" ]] || [[ "$5" =~ "--force-encodage" ]]; then
-  force_encodage="oui"
-else
-  force_encodage="non"
-fi
+  if [[ "$parametre" == "--ignore-range" ]]; then
+    ignore_range="oui"
+  fi
+  
+#  if [[ "$parametre" == "--ignore-filebot" ]]; then
+#    ignore_filebot="oui"
+#  else
+#    ignore_filebot="non"
+#  fi
+  ignore_filebot="oui"
+  
+  if [[ "$parametre" == "--force-encodage" ]]; then
+    force_encodage="oui"
+  fi
+  
+  if [[ "$parametre" =~ "--source:" ]]; then
+    parametre_source=`echo $parametre | sed 's/--source://g'`
+  fi
+done
  
 #### je dois charger le fichier conf ici ou trouver une solution (script_url et maj_force)
 dossier_config=`echo "/root/.config/"$mon_script_base`
@@ -637,6 +645,12 @@ if [[ "$chemin_argos" != "" ]]; then
   fi
 fi
  
+#### Prise en compte du parametre --source:
+if [[ "$parametre_source" != "" ]]; then
+  dossier_source=$parametre_source
+fi
+echo -e "Dossier source : "$dossier_source
+exit 1
  
 #### Verifications de base
 eval 'echo -e "\e[44m\u2263\u2263  \e[0m \e[44m \e[1mVÉRIFICATIONS DE BASE  \e[0m \e[44m  \e[0m \e[44m \e[0m \e[34m\u2759\e[0m"' $mon_log_perso
