@@ -1,3 +1,8 @@
+Version 0.0.1.54:
+- ajout de "--source:"
+- ajout de "--force-encodage"
+- ajout de "--ignore-filebot" (des bugs persistent, désactivation de la fonction en brut dans le script)
+ 
 Version 0.0.1.08:
 - ajout de "--maj-uniquement"
 - relooking des echos des destinations
