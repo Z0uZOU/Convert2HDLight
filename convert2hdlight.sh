@@ -1034,7 +1034,7 @@ if [[ "$mes_medias" != "" ]] ; then
             if [[ "$temperature" != "" ]]; then
               if [ "$temperature" -gt "$temperature_max" ]; then
                 kill -9 $pid
-                eval 'echo -e "\n[\e[41m TEMPÉRATURE EXCESSIVE DÉTECTÉE, FIN DU PROGRAMME \e[0m]"' $mon_log_perso
+                eval 'echo -e "\n[\e[41m TEMPÉRATURE ($temperature) EXCESSIVE DÉTECTÉE, FIN DU PROGRAMME \e[0m]"' $mon_log_perso
                 fin_script=`date`
                 eval 'echo -e "\e[43m-- FIN DE SCRIPT: $fin_script --\e[0m"' $mon_log_perso
                 if [[ "$1" == "--menu" ]]; then
