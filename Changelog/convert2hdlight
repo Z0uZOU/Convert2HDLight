@@ -1,3 +1,6 @@
+Version 0.0.1.55
+- ajout du paramètre "temperature_max" dans le fichier de configuration
+
 Version 0.0.1.54:
 - ajout de "--source:"
 - ajout de "--force-encodage"
