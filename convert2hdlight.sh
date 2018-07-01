@@ -1030,7 +1030,8 @@ if [[ "$mes_medias" != "" ]] ; then
             #temperature=`cat $dossier_config/tempcpu.txt | grep -oP 'Core 0.*?\+\K[0-9]+'`
             temperature=`cat $dossier_config/tempcpu.txt | grep -oP 'Core 0.*?\+\K[0-9]+' | sed -n '1p'`
             rm -f $dossier_config/tempcpu.txt
-            if [[ "$temperature" != "" ]] && [[ "$temperature_max" != "" ]]; then
+            if [[ "$temperature_max" == "" ]]; then temperature_max="85"; fi
+            if [[ "$temperature" != "" ]]; then
               if [ "$temperature" -gt "$temperature_max" ]; then
                 kill -9 $pid
                 eval 'echo -e "\n[\e[41m TEMPÉRATURE EXCESSIVE DÉTECTÉE, FIN DU PROGRAMME \e[0m]"' $mon_log_perso
