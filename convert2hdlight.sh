@@ -14,7 +14,7 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.54" #base du système de mise à jour
+version="Version: 0.0.1.55" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/Changelog/convert2hdlight" #emplacement du changelog de ce script
@@ -450,13 +450,15 @@ script_url=""
  
 ##### Paramètres
 ## Sources
-dossier_source="/home/sdc1/Handbrake/A_Convertir"
+dossier_source="/mnt/sdc1/Handbrake/A_Convertir"
 ## Cibles
-dossier_cible="/home/sdc1/Handbrake/Converti"
-dossier_cible_erreur="/home/sdc1/Handbrake/Erreur"
+dossier_cible="/mnt/sdc1/Handbrake/Converti"
+dossier_cible_erreur="/mnt/sdc1/Handbrake/Erreur"
 dossier_cible_media_3D="/mnt/sdc1/Handbrake/Media_3D"
-dossier_filebot_films="/home/sdc1/Downloads/Films_Hdlight"
-dossier_filebot_series="/home/sdc1/Downloads/Séries_HQ"
+dossier_filebot_films="/mnt/sdc1/Downloads/Films_Hdlight"
+dossier_filebot_series="/mnt/sdc1/Downloads/Séries_HQ"
+## Température maximum avant coupure du script
+temperature_max="85"
  
 #### Paramètre du push
 ## ces réglages se trouvent sur le site http://www.pushover.net
@@ -1028,10 +1030,10 @@ if [[ "$mes_medias" != "" ]] ; then
             #temperature=`cat $dossier_config/tempcpu.txt | grep -oP 'Core 0.*?\+\K[0-9]+'`
             temperature=`cat $dossier_config/tempcpu.txt | grep -oP 'Core 0.*?\+\K[0-9]+' | sed -n '1p'`
             rm -f $dossier_config/tempcpu.txt
-            if [[ "$temperature" != "" ]]; then
-              if [ "$temperature" -gt "85" ]; then
+            if [[ "$temperature" != "" ]] && [[ "$temperature_max" != "" ]]; then
+              if [ "$temperature" -gt "$temperature_max" ]; then
                 kill -9 $pid
-                eval 'echo -e "[\e[41m TEMPÉRATURE EXCESSIVE DÉTECTÉE, FIN DU PROGRAMME \e[0m]"' $mon_log_perso
+                eval 'echo -e "\n[\e[41m TEMPÉRATURE EXCESSIVE DÉTECTÉE, FIN DU PROGRAMME \e[0m]"' $mon_log_perso
                 fin_script=`date`
                 eval 'echo -e "\e[43m-- FIN DE SCRIPT: $fin_script --\e[0m"' $mon_log_perso
                 if [[ "$1" == "--menu" ]]; then
