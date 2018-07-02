@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-version="0.0.0.25"
+version="0.0.0.26"
 
 #### Nettoyage
 if [[ -f "~/convert2hdlight-update.sh" ]]; then
@@ -30,8 +30,8 @@ if [[ "$yad_missing" == "1" ]] || [[ "$curl_missing" == "1" ]] || [[ "$gawk_miss
 fi
 
 #### Création du dossier de notre extension (si il n'existe pas)
-if [[ ! -d "$HOME/.config/argos/convert2hdlight/log" ]]; then
-  mkdir -p $HOME/.config/argos/convert2hdlight/log
+if [[ ! -d "$HOME/.config/argos/convert2hdlight" ]]; then
+  mkdir -p $HOME/.config/argos/convert2hdlight
 fi
 
 #### Récupération des versions (locale et distante)
