@@ -14,7 +14,7 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.56" #base du système de mise à jour
+version="Version: 0.0.1.57" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/Changelog/convert2hdlight" #emplacement du changelog de ce script
@@ -710,12 +710,12 @@ if [[ "$range_path" != "" ]]; then
     # libre_filebot_series_hdtv=`df --total -hl "$filebot_series_hdtv" | grep "total" | awk '{print $4}' | sed 's/T/To/' | sed 's/G/Go/'`
     # eval 'echo -e "[\e[42m\u2713 \e[0m] Dossier filebot séries HDTV: "$libre_filebot_series_hdtv"\n[..... "$filebot_series_hdtv' $mon_log_perso
     # eval 'echo -e "[\e[42m\u2713 \e[0m] Dossier destination séries HDTV: "$libre_series_hdtv"\n[..... "$destination_series_hdtv' $mon_log_perso
-    eval $(source $range_path; echo destination_series_dvdrip=$cible_auto_series_dvdrip)
-    eval $(source $range_path; echo filebot_series_dvdrip=$download_auto_series_dvdrip)
-    libre_series_dvdrip=`df --total -hl "$destination_series_dvdrip" | grep "total" | awk '{print $4}' | sed 's/T/To/' | sed 's/G/Go/'`
-    libre_filebot_series_dvdrip=`df --total -hl "$filebot_series_dvdrip" | grep "total" | awk '{print $4}' | sed 's/T/To/' | sed 's/G/Go/'`
-    eval 'echo -e "[\e[42m\u2713 \e[0m] Dossier filebot séries DVDRiP: "$libre_filebot_series_dvdrip"\n[..... "$filebot_series_dvdrip' $mon_log_perso
-    eval 'echo -e "[\e[42m\u2713 \e[0m] Dossier destination séries DVDRiP: "$libre_series_dvdrip"\n[..... "$destination_series_dvdrip' $mon_log_perso
+    eval $(source $range_path; echo destination_series_hd=$cible_auto_series_hd)
+    eval $(source $range_path; echo filebot_series_hd=$download_auto_series_hd)
+    libre_series_hd=`df --total -hl "$destination_series_hd" | grep "total" | awk '{print $4}' | sed 's/T/To/' | sed 's/G/Go/'`
+    libre_filebot_series_hd=`df --total -hl "$filebot_series_hd" | grep "total" | awk '{print $4}' | sed 's/T/To/' | sed 's/G/Go/'`
+    eval 'echo -e "[\e[42m\u2713 \e[0m] Dossier filebot séries HD: "$libre_filebot_series_hd"\n[..... "$filebot_series_hd' $mon_log_perso
+    eval 'echo -e "[\e[42m\u2713 \e[0m] Dossier destination séries HD: "$libre_series_hd"\n[..... "$destination_series_hd' $mon_log_perso
   fi
   rm -f $dossier_config/range.txt
 fi
@@ -1147,10 +1147,10 @@ if [[ "$mes_medias" != "" ]] ; then
                 fi
               fi
             else
-              if [[ "$filebot_series_dvdrip" != "" ]]; then
-                if [[ ! -d "$filebot_series_dvdrip" ]]; then mkdir -p "$filebot_series_dvdrip";  fi
-                mv "$dossier_cible/$fichier-part" "$filebot_series_dvdrip/$fichier"
-                eval 'echo -e "[..... |\e[42m VERS "$filebot_series_dvdrip" \e[0m|"' $mon_log_perso
+              if [[ "$filebot_series_hd" != "" ]]; then
+                if [[ ! -d "$filebot_series_hd" ]]; then mkdir -p "$filebot_series_hd";  fi
+                mv "$dossier_cible/$fichier-part" "$filebot_series_hd/$fichier"
+                eval 'echo -e "[..... |\e[42m VERS "$filebot_series_hd" \e[0m|"' $mon_log_perso
               else
                 if [[ "$dossier_filebot_series" != "" ]]; then
                   if [[ ! -d "$dossier_filebot_series" ]]; then mkdir -p "$dossier_filebot_series";  fi
@@ -1214,8 +1214,8 @@ if [[ "$mes_medias" != "" ]] ; then
             fi
           fi
           if [[ "$categorie" == "Série" ]] ; then
-            if [[ "$filebot_series_dvdrip" != "" ]] ; then
-              eval 'echo -e "[..... déplacement du fichier $dossier_cible/$fichier-part\n        \u2192 $filebot_series_dvdrip/$fichier"' $mon_log_perso
+            if [[ "$filebot_series_hd" != "" ]] ; then
+              eval 'echo -e "[..... déplacement du fichier $dossier_cible/$fichier-part\n        \u2192 $filebot_series_hd/$fichier"' $mon_log_perso
             else
               if [[ "$dossier_filebot_series" != "" ]] ; then
                 eval 'echo -e "[..... déplacement du fichier $dossier_cible/$fichier-part\n        \u2192 $dossier_filebot_series/$fichier"' $mon_log_perso
