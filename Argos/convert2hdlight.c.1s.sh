@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-version="0.0.0.26"
+version="0.0.0.27"
 
 #### Nettoyage
 if [[ -f "~/convert2hdlight-update.sh" ]]; then
@@ -161,17 +161,12 @@ folder_in=""
 folder_out=""
 if [[ $title != "Encodage terminé" ]] && [[ $title != "..." ]] && [[ $title != "" ]]; then
   file=`cat $in_progress | sed -n '3p'`
-  #folder_in=`cat $in_progress | sed -n '2p' | sed -e 's/\/'$file'//g'`
   folder_in=$(dirname "$(cat $in_progress | sed -n '2p')")
   folder_out=`cat $in_progress | sed -n '4p'`
   size_file=`ls -l "$folder_in/$fichier" | awk '{print $5}'`
   size_file=`humanise $size_file`
   size_folder_in=`df -Hl "$folder_in" | grep '/dev/' | awk '{print $4}' | sed 's/M/ Mo/' | sed 's/T/ To/' | sed 's/G/ Go/'`
-  #size_folder_in=`df $folder_in | grep '/dev/' | awk '{print $4}'`
-  #size_folder_in=`humanise $size_folder_in`
   size_folder_out=`df -Hl "$folder_out" | grep '/dev/' | awk '{print $4}' | sed 's/M/ Mo/' | sed 's/T/ To/' | sed 's/G/ Go/'`
-  #size_folder_out=`df $folder_out | grep '/dev/' | awk '{print $4}'`
-  #size_folder_out=`humanise $size_folder_out`
 else
   echo " ... | image='$CONVERT2HDLIGHT_ICON' imageWidth=25"
   exit 1
@@ -187,40 +182,142 @@ fi
 
 ### Déclaration de la variable de log
 log_file="$HOME/.config/argos/convert2hdlight/temp"
+if [[ ! -d "$log_file" ]]; then
+  mkdir -p $log_file
+fi
 
 ### Récupération des infos du média
-mediainfo_resolution=`cat $log_file/mediainfo_resolution.txt`
-mediainfo_duree=`cat $log_file/mediainfo_duree.txt`
-mediainfo_langue=`cat $log_file/mediainfo_langue.txt`
+if [[ ! -f "$log_file/mediainfo_resolution.txt" ]] || [[ ! -f "$log_file/mediainfo_duree.txt" ]] || [[ ! -f "$log_file/mediainfo_langue.txt" ]]; then
+  mon_media=`cat $in_progress | sed -n '2p'`
+  filebot -mediainfo "$mon_media" --format "#0¢{gigabytes}#1¢{minutes}#2¢{vf}#3¢{vc}#4¢{audio.Language}#5¢{audio.Codec}#6¢{kbps}#7¢{s3d}#8¢" 2>/dev/null > $log_file/mediainfo.txt
+  mediainfo_taille=`cat $log_file/mediainfo.txt | sed 's/.*#0¢//' | sed 's/#1¢.*//'`
+  mediainfo_duree=`cat $log_file/mediainfo.txt | sed 's/.*#1¢//' | sed 's/#2¢.*//'`
+  mediainfo_resolution=`cat $log_file/mediainfo.txt | sed 's/.*#2¢//' | sed 's/#3¢.*//'`
+  mediainfo_codec=`cat $log_file/mediainfo.txt | sed 's/.*#3¢//' | sed 's/#4¢.*//'`
+  mediainfo_langue=`cat $log_file/mediainfo.txt | sed 's/.*#4¢//' | sed 's/#5¢.*//'`
+  mediainfo_langue_codec=`cat $log_file/mediainfo.txt | sed 's/.*#5¢//' | sed 's/#6¢.*//'`
+  mediainfo_bitrate=`cat $log_file/mediainfo.txt | sed 's/.*#6¢//' | sed 's/#7¢.*//'`
+  mediainfo_3d=`cat $log_file/mediainfo.txt | sed 's/.*#7¢//' | sed 's/#8¢.*//'`
+  rm -f $log_file/mediainfo.txt
+  mediainfo_langue_clean=`echo $mediainfo_langue | sed 's/\[//g' | sed 's/\]//g'`
+  mediainfo_langue_codec_clean=`echo $mediainfo_langue_codec | sed 's/\[//g' | sed 's/\]//g'`
+  
+  echo "$mediainfo_duree" > $log_file/mediainfo_duree.txt
+  echo "$mediainfo_resolution" > $log_file/mediainfo_resolution.txt
+  echo "$mediainfo_langue_clean" > $log_file/mediainfo_langue.txt
+else
+  mediainfo_resolution=`cat $log_file/mediainfo_resolution.txt`
+  mediainfo_duree=`cat $log_file/mediainfo_duree.txt`
+  mediainfo_langue=`cat $log_file/mediainfo_langue.txt`
+fi
 
 ### Récupération des infos de l'épisode
 if [[ "$categorie" == "Série" ]]; then
-  serie_nom_en=`cat $log_file/serie_nom_en.txt`
-  serie_nom_fr=`cat $log_file/serie_nom_fr.txt`
-  serie_annee=`cat $log_file/serie_annee.txt`
-  serie_tvdb_id=`cat $log_file/serie_tvdb_id.txt`
-  serie_diffusion_episode=`cat $log_file/serie_diffusion_episode.txt`
-  serie_genres=`cat $log_file/serie_genres.txt`
-  serie_note=`cat $log_file/serie_note.txt`
-  serie_saison=`cat $log_file/serie_saison.txt`
-  serie_episode=`cat $log_file/serie_episode.txt`
-  serie_titre_fr=`cat $log_file/serie_titre_fr.txt`
-  serie_titre_en=`cat $log_file/serie_titre_en.txt`
+  if [[ ! -f "$log_file/serie_nom_fr.txt" ]]; then
+    mon_media=`cat $in_progress | sed -n '2p'`
+    filebot --action test -script fn:amc --db TheTVDB -non-strict --conflict override --lang fr --encoding UTF-8 --mode rename "$mon_media" --def minFileSize=0 --def "seriesFormat=/opt/scripts/TEMP/#0¢{localize.English.n}#1¢{localize.French.n}#2¢{y}#3¢{id}#4¢{airdate}#5¢{genres}#6¢{rating}#7¢{s}#8¢{e.pad(2)}#9¢{localize.French.t}#10¢{localize.English.t}#11¢" 2>/dev/null > $log_file/mediainfo.txt
+    verif_bonne_detection=`cat $log_file/mediainfo.txt | grep "TEST" | grep "/Movies/"`
+    if [[ "$verif_bonne_detection" != "" ]]; then
+      echo "Fichier non-valide" > $log_file/mediainfo.txt
+    else
+      serie_nom_en=`cat $log_file/mediainfo.txt | grep "TEST" | sed 's/.*#0¢//' | sed 's/#1¢.*//'`
+      serie_nom_fr=`cat $log_file/mediainfo.txt | grep "TEST" | sed 's/.*#1¢//' | sed 's/#2¢.*//'`
+      serie_annee=`cat $log_file/mediainfo.txt | grep "TEST" | sed 's/.*#2¢//' | sed 's/#3¢.*//'`
+      serie_tvdb_id=`cat $log_file/mediainfo.txt | grep "TEST" | sed 's/.*#3¢//' | sed 's/#4¢.*//'`
+      serie_diffusion_episode=`cat $log_file/mediainfo.txt | grep "TEST" | sed 's/.*#4¢//' | sed 's/#5¢.*//'`
+      serie_genres=`cat $log_file/mediainfo.txt | grep "TEST" | sed 's/.*#5¢//' | sed 's/#6¢.*//'`
+      serie_note=`cat $log_file/mediainfo.txt | grep "TEST" | sed 's/.*#6¢//' | sed 's/#7¢.*//'`
+      serie_saison=`cat $log_file/mediainfo.txt | grep "TEST" | sed 's/.*#7¢//' | sed 's/#8¢.*//'`
+      serie_episode=`cat $log_file/mediainfo.txt | grep "TEST" | sed 's/.*#8¢//' | sed 's/#9¢.*//'`
+      serie_titre_fr=`cat $log_file/mediainfo.txt | grep "TEST" | sed 's/.*#9¢//' | sed 's/#10¢.*//'`
+      serie_titre_en=`cat $log_file/mediainfo.txt | grep "TEST" | sed 's/.*#10¢//' | sed 's/#11¢.*//'`
+      
+      if [[ ! -d "$HOME/.config/argos/convert2hdlight/Covers/Séries" ]]; then
+        mkdir -p $HOME/.config/argos/convert2hdlight/Covers/Séries
+      fi
+      if [[ ! -f "$HOME/.config/argos/convert2hdlight/Covers/Séries/$serie_tvdb_id.jpg" ]]; then
+        wget -q "https://www.thetvdb.com/banners/_cache/posters/$serie_tvdb_id-1.jpg" -O "$HOME/.config/argos/convert2hdlight/Covers/Séries/$serie_tvdb_id.jpg"
+      fi
+      echo "$serie_nom_en" > $log_file/serie_nom_en.txt
+      echo "$serie_nom_fr" > $log_file/serie_nom_fr.txt
+      echo "$serie_annee" > $log_file/serie_annee.txt
+      echo "$serie_tvdb_id" > $log_file/serie_tvdb_id.txt
+      echo "$serie_diffusion_episode" > $log_file/serie_diffusion_episode.txt
+      echo "$serie_genres" > $log_file/serie_genres.txt
+      echo "$serie_note" > $log_file/serie_note.txt
+      echo "$serie_saison" > $log_file/serie_saison.txt
+      echo "$serie_episode" > $log_file/serie_episode.txt
+      echo "$serie_titre_fr" > $log_file/serie_titre_fr.txt
+      echo "$serie_titre_en" > $log_file/serie_titre_en.txt
+    fi
+    rm -f $log_file/mediainfo.txt
+  else
+    serie_nom_en=`cat $log_file/serie_nom_en.txt`
+    serie_nom_fr=`cat $log_file/serie_nom_fr.txt`
+    serie_annee=`cat $log_file/serie_annee.txt`
+    serie_tvdb_id=`cat $log_file/serie_tvdb_id.txt`
+    serie_diffusion_episode=`cat $log_file/serie_diffusion_episode.txt`
+    serie_genres=`cat $log_file/serie_genres.txt`
+    serie_note=`cat $log_file/serie_note.txt`
+    serie_saison=`cat $log_file/serie_saison.txt`
+    serie_episode=`cat $log_file/serie_episode.txt`
+    serie_titre_fr=`cat $log_file/serie_titre_fr.txt`
+    serie_titre_en=`cat $log_file/serie_titre_en.txt`
+  fi
+  website_url="http://thetvdb.com/?tab=series&id=$serie_tvdb_id"
   attention_vide="0"
   if [[ "$serie_nom_en" == "" ]] && [[ "$serie_nom_fr" == "" ]]; then
     attention_vide="1"
   fi
 else
 ### Récupération des infos du film
-  film_titre_en=`cat $log_file/serie_nom_en.txt`
-  film_titre_fr=`cat $log_file/film_titre_fr.txt`
-  film_annee=`cat $log_file/film_annee.txt`
-  film_tmdb_id=`cat $log_file/film_tmdb_id.txt`
-  film_imdb_id=`cat $log_file/film_imdb_id.txt`
-  film_genres=`cat $log_file/film_genres.txt`
-  film_note=`cat $log_file/film_note.txt`
-  film_origine=`cat $log_file/film_origine.txt`
-  film_synopsis=`cat $log_file/film_synopsis.txt`
+  if [[! -f "$log_file/film_titre_fr.txt" ]]; then
+    filebot --action test -script fn:amc --db TheMovieDB -non-strict --conflict override --lang fr --encoding UTF-8 --mode rename "$mon_media" --def minFileSize=0 --def "movieFormat=/opt/scripts/TEMP/#0¢{localize.English.n}#1¢{localize.French.n}#2¢{y}#3¢{id}#4¢{imdbid}#5¢{localize.French.genres}#6¢{rating}#7¢{info.ProductionCountries}#8¢{info.overview}#9¢" 2>/dev/null > $log_file/mediainfo.txt
+    verif_bonne_detection=`cat $log_file/mediainfo.txt | grep "TEST" | grep "/TV Shows/"`
+    if [[ "$verif_bonne_detection" != "" ]]; then
+      echo "Fichier non-valide" > $log_file/mediainfo.txt
+    else
+      film_titre_en=`cat $log_file/mediainfo.txt | grep "TEST" | sed 's/.*#0¢//' | sed 's/#1¢.*//'`
+      film_titre_fr=`cat $log_file/mediainfo.txt | grep "TEST" | sed 's/.*#1¢//' | sed 's/#2¢.*//'`
+      film_annee=`cat $log_file/mediainfo.txt | grep "TEST" | sed 's/.*#2¢//' | sed 's/#3¢.*//'`
+      film_tmdb_id=`cat $log_file/mediainfo.txt | grep "TEST" | sed 's/.*#3¢//' | sed 's/#4¢.*//'`
+      film_imdb_id=`cat $log_file/mediainfo.txt | grep "TEST" | sed 's/.*#4¢//' | sed 's/#5¢.*//'`
+      film_genres=`cat $log_file/mediainfo.txt | grep "TEST" | sed 's/.*#5¢//' | sed 's/#6¢.*//'`
+      film_note=`cat $log_file/mediainfo.txt | grep "TEST" | sed 's/.*#6¢//' | sed 's/#7¢.*//'`
+      film_origine=`cat $log_file/mediainfo.txt | grep "TEST" | sed 's/.*#7¢//' | sed 's/#8¢.*//'`
+      url_tmdb="https://www.themoviedb.org/movie/$film_tmdb_id/fr"
+      wget -q -O- $url_tmdb | grep "\"description\"" | sed -n '1p' | sed 's/.*content=\"//' | sed 's/\".*//' > $log_file/film_synopsis.txt
+      if [[ ! -d "$HOME/.config/argos/convert2hdlight/Covers/Films" ]]; then
+        mkdir -p $HOME/.config/argos/convert2hdlight/Covers/Films
+      fi
+      if [[ ! -f "$HOME/.config/argos/convert2hdlight/Covers/Films/$film_tmdb_id.jpg" ]]; then
+        url_tmdb="https://www.themoviedb.org/movie/$film_tmdb_id/images/posters"
+        wget -q -O- $url_tmdb | grep "og:image" | sed -n '1p' | sed 's/.*content=\"//' | sed 's/\".*//' > $log_file/url_tmdb.txt
+        url_tmdb_cover=`cat $log_file/url_tmdb.txt`
+        wget -q "$url_tmdb_cover" -O "$HOME/.config/argos/convert2hdlight/Covers/Films/$film_tmdb_id.jpg"
+      fi
+      echo "$film_titre_en" > $log_file/film_titre_en.txt
+      echo "$film_titre_fr" > $log_file/film_titre_fr.txt
+      echo "$film_annee" > $log_file/film_annee.txt
+      echo "$film_tmdb_id" > $log_file/film_tmdb_id.txt
+      echo "$film_imdb_id" > $log_file/film_imdb_id.txt
+      echo "$film_genres" > $log_file/film_genres.txt
+      echo "$film_note" > $log_file/film_note.txt
+      echo "$film_origine" > $log_file/film_origine.txt
+    fi
+    rm -f $dossier_config/mediainfo.txt
+  else
+    film_titre_en=`cat $log_file/film_nom_en.txt`
+    film_titre_fr=`cat $log_file/film_titre_fr.txt`
+    film_annee=`cat $log_file/film_annee.txt`
+    film_tmdb_id=`cat $log_file/film_tmdb_id.txt`
+    film_imdb_id=`cat $log_file/film_imdb_id.txt`
+    film_genres=`cat $log_file/film_genres.txt`
+    film_note=`cat $log_file/film_note.txt`
+    film_origine=`cat $log_file/film_origine.txt`
+    film_synopsis=`cat $log_file/film_synopsis.txt`
+  fi
+  website_url="https://www.themoviedb.org/movie/$film_tmdb_id/fr"
   attention_vide="0"
   if [[ "$film_titre_en" == "" ]] && [[ "$film_titre_fr" == "" ]]; then
     attention_vide="1"
@@ -239,9 +336,9 @@ echo " $title | image='$CONVERT2HDLIGHT_ICON' imageWidth=25"
 if [[ "$file" != "" ]]; then
   echo "---"
   if [[ "$categorie" == "Série" ]]; then
-    printf "%19s | ansi=true font='Ubuntu Mono' trim=false size=20 terminal=false image=$COVER imageWidth=80 \n" "$serie_nom_fr"
+    printf "%19s | ansi=true font='Ubuntu Mono' trim=false size=20 terminal=false href=$website_url image=$COVER imageWidth=80 \n" "$serie_nom_fr"
   else
-    printf "%19s | ansi=true font='Ubuntu Mono' trim=false size=20 terminal=false image=$COVER imageWidth=80 \n" "$film_titre_fr"
+    printf "%19s | ansi=true font='Ubuntu Mono' trim=false size=20 terminal=false href=$website_url image=$COVER imageWidth=80 \n" "$film_titre_fr"
   fi
   printf "\e[1m%-10s\e[0m : %s | ansi=true font='Ubuntu Mono' trim=false \n" "Fichier" "$file"
   printf "%-2s \u251c\u2500 \e[1m%-13s\e[0m : %s | ansi=true font='Ubuntu Mono' trim=false \n" "" "Resolution" "$mediainfo_resolution"
