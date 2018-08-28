@@ -14,7 +14,7 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.57" #base du système de mise à jour
+version="Version: 0.0.1.58" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/Changelog/convert2hdlight" #emplacement du changelog de ce script
@@ -386,28 +386,28 @@ if [[ "$1" == "--maj-uniquement" ]]; then
 fi
  
 #### Vérification de la conformité du cron
-crontab -l > mon_cron_$mon_script_base.txt
-cron_path=`cat mon_cron_$mon_script_base.txt | grep "PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin"`
+crontab -l > $dossier_config/mon_cron.txt
+cron_path=`cat $dossier_config/mon_cron.txt | grep "PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin"`
 if [[ "$cron_path" == "" ]]; then
-  sed -i '1iPATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin' mon_cron_$mon_script_base.txt
+  sed -i '1iPATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin' $dossier_config/mon_cron.txt
   cron_a_appliquer="oui"
 fi
-cron_lang=`cat mon_cron_$mon_script_base.txt | grep "LANG=fr_FR.UTF-8"`
+cron_lang=`cat $dossier_config/mon_cron.txt | grep "LANG=fr_FR.UTF-8"`
 if [[ "$cron_lang" == "" ]]; then
-  sed -i '1iLANG=fr_FR.UTF-8' mon_cron_$mon_script_base.txt
+  sed -i '1iLANG=fr_FR.UTF-8' $dossier_config/mon_cron.txt
   cron_a_appliquer="oui"
 fi
-cron_variable=`cat mon_cron_$mon_script_base.txt | grep "CRON_SCRIPT=\"oui\""`
+cron_variable=`cat $dossier_config/mon_cron.txt | grep "CRON_SCRIPT=\"oui\""`
 if [[ "$cron_variable" == "" ]]; then
-  sed -i '1iCRON_SCRIPT="oui"' mon_cron_$mon_script_base.txt
+  sed -i '1iCRON_SCRIPT="oui"' $dossier_config/mon_cron.txt
   cron_a_appliquer="oui"
 fi
 if [[ "$cron_a_appliquer" == "oui" ]]; then
-  crontab mon_cron_$mon_script_base.txt
-  rm -f mon_cron_$mon_script_base.txt
+  crontab $dossier_config/mon_cron.txt
+  rm -f $dossier_config/mon_cron.txt
   eval 'echo "-- Cron mis en conformité"' $mon_log_perso
 else
-  rm -f mon_cron_$mon_script_base.txt
+  rm -f $dossier_config/mon_cron.txt
 fi
  
 #### Mise en place éventuelle d'un cron
@@ -419,10 +419,10 @@ if [[ "$script_cron" != "" ]]; then
     eval 'echo "-- Création..."' $mon_log_perso
     ajout_cron=`echo -e "$script_cron\t\t/opt/scripts/$mon_script_fichier > /var/log/$mon_script_log 2>&1"`
     eval 'echo "-- Mise en place dans le cron..."' $mon_log_perso
-    crontab -l > mon_cron_$mon_script_base.txt
-    echo -e "$ajout_cron" >> mon_cron_$mon_script_base.txt
-    crontab mon_cron_$mon_script_base.txt
-    rm -f mon_cron_$mon_script_base.txt
+    crontab -l > $dossier_config/mon_cron.txt
+    echo -e "$ajout_cron" >> $dossier_config/mon_cron.txt
+    crontab $dossier_config/mon_cron.txt
+    rm -f $dossier_config/mon_cron.txt
     eval 'echo "-- Cron mis à jour"' $mon_log_perso
   else
     eval 'echo -e "\e[101mLE SCRIPT EST PRÉSENT DANS LE CRON\e[0m"' $mon_log_perso
