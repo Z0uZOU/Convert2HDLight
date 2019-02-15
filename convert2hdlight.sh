@@ -14,7 +14,7 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.61" #base du système de mise à jour
+version="Version: 0.0.1.62" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/Changelog/convert2hdlight" #emplacement du changelog de ce script
@@ -678,8 +678,10 @@ else
 fi
  
 ## Espace libre
+if [[ ! -d "$dossier_source" ]]; then mkdir -p "$dossier_source"; fi
 libre_dossier_source=`df --total -hl "$dossier_source" | grep "total" | awk '{print $4}' | sed 's/T/To/' | sed 's/G/Go/'`
 eval 'echo -e "[\e[42m\u2713 \e[0m] Dossier source: "$libre_dossier_source"\n[..... "$dossier_source' $mon_log_perso
+if [[ ! -d "$dossier_cible" ]]; then mkdir -p "$dossier_cible"; fi
 libre_dossier_cible=`df --total -hl "$dossier_cible" | grep "total" | awk '{print $4}' | sed 's/T/To/' | sed 's/G/Go/'`
 eval 'echo -e "[\e[42m\u2713 \e[0m] Dossier cible: "$libre_dossier_cible"\n[..... "$dossier_cible' $mon_log_perso
 locate range.conf > $dossier_config/range.txt &
