@@ -14,7 +14,7 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.62" #base du système de mise à jour
+version="Version: 0.0.1.63" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/Changelog/convert2hdlight" #emplacement du changelog de ce script
@@ -704,6 +704,8 @@ if [[ "$range_path" != "" ]]; then
   else
     eval $(source $range_path; echo destination_films_hd=$cible_auto_films_hd)
     eval $(source $range_path; echo filebot_films_hd=$download_auto_films_hd)
+    if [[ ! -d "$destination_films_hd" ]]; then mkdir -p "$destination_films_hd"; fi
+    if [[ ! -d "$filebot_films_hd" ]]; then mkdir -p "$filebot_films_hd"; fi
     libre_films_hd=`df --total -hl "$destination_films_hd" | grep "total" | awk '{print $4}' | sed 's/T/To/' | sed 's/G/Go/'`
     libre_filebot_films_hd=`df --total -hl "$filebot_films_hd" | grep "total" | awk '{print $4}' | sed 's/T/To/' | sed 's/G/Go/'`
     eval 'echo -e "[\e[42m\u2713 \e[0m] Dossier filebot films HD: "$libre_filebot_films_hd"\n[..... "$filebot_films_hd' $mon_log_perso
@@ -716,6 +718,8 @@ if [[ "$range_path" != "" ]]; then
     # eval 'echo -e "[\e[42m\u2713 \e[0m] Dossier destination séries HDTV: "$libre_series_hdtv"\n[..... "$destination_series_hdtv' $mon_log_perso
     eval $(source $range_path; echo destination_series_hd=$cible_auto_series_hd)
     eval $(source $range_path; echo filebot_series_hd=$download_auto_series_hd)
+    if [[ ! -d "$destination_series_hd" ]]; then mkdir -p "$destination_series_hd"; fi
+    if [[ ! -d "$filebot_series_hd" ]]; then mkdir -p "$filebot_series_hd"; fi
     libre_series_hd=`df --total -hl "$destination_series_hd" | grep "total" | awk '{print $4}' | sed 's/T/To/' | sed 's/G/Go/'`
     libre_filebot_series_hd=`df --total -hl "$filebot_series_hd" | grep "total" | awk '{print $4}' | sed 's/T/To/' | sed 's/G/Go/'`
     eval 'echo -e "[\e[42m\u2713 \e[0m] Dossier filebot séries HD: "$libre_filebot_series_hd"\n[..... "$filebot_series_hd' $mon_log_perso
