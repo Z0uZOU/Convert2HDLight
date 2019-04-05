@@ -14,7 +14,7 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.63" #base du système de mise à jour
+version="Version: 0.0.1.64" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/Changelog/convert2hdlight" #emplacement du changelog de ce script
@@ -519,8 +519,11 @@ done
 
 #### Vérification de FileBot
 filebot_present=`filebot -version 2>/dev/null`
-if [[ "$filebot_present" =~ "FileBot" ]]; then
+if [[ "$filebot_present" =~ "FileBot" ]] || [[ "$filebot_present" =~ "Unrecognized option" ]]; then
   filebot_local=`filebot -version | awk '{print $2}' 2>/dev/null`
+  if [[ "$filebot_present" =~ "Unrecognized option" ]]; then
+    filebot_local="Inconnue"
+  fi
   echo -e "[\e[42m\u2713 \e[0m] La dépendance: filebot est installée ("$filebot_local")"
 else
   wget -O- -q $lien_filebot > $dossier_config/filebot.txt &
