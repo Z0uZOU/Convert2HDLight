@@ -14,7 +14,7 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.66" #base du système de mise à jour
+version="Version: 0.0.1.67" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/Changelog/convert2hdlight" #emplacement du changelog de ce script
@@ -1320,10 +1320,11 @@ fi
 if [[ -f "/root/.config/convert2hdlight/.stop-convert" ]]; then
   rm "/root/.config/convert2hdlight/.stop-convert"
 fi
-if [[ "$mes_medias" == "" ]] ; then
+if [[ "$mes_medias" == "" ]]; then
   rm -f "$fichier_log_perso"
   echo -e "\e[44m\u2263\u2263  \e[0m \e[44m \e[1mRECHERCHE DE DOSSIERS LOG VIDES  \e[0m \e[44m  \e[0m \e[44m \e[0m \e[34m\u2759\e[0m"
   dossier_log=`echo $dossier_config"/log"`
+  if [[ ! -d "$dossier_log" ]]; then mkdir -p "$dossier_source"; fi
   find $dossier_log -depth -type d -empty -not -path "$dossier_log" > $dossier_config/dossiers_vides.txt &
   pid=$!
   spin='-\|/'
