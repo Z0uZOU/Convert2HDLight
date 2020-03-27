@@ -7509,6 +7509,13 @@
         {
             "AudioCopyMask": [
                 "copy:aac"
+                "copy:ac3",
+                "copy:dtshd",
+                "copy:dts",
+                "copy:mp3",
+                "copy:truehd",
+                "copy:flac",
+                "copy:eac3"
             ],
             "AudioEncoderFallback": "av_aac",
             "AudioLanguageList": [],
