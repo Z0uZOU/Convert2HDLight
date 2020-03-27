@@ -7508,7 +7508,7 @@
         },
         {
             "AudioCopyMask": [
-                "copy:aac"
+                "copy:aac",
                 "copy:ac3",
                 "copy:dtshd",
                 "copy:dts",
