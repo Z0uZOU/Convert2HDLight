@@ -14,7 +14,7 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.67" #base du système de mise à jour
+version="Version: 0.0.1.68" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/Changelog/convert2hdlight" #emplacement du changelog de ce script
@@ -1362,6 +1362,7 @@ echo "..." > /opt/scripts/.$mon_script_base
 fin_script=`date`
 if [[ -f "$fichier_log_perso" ]]; then
   eval 'echo -e "\e[43m-- FIN DE SCRIPT: $fin_script --\e[0m"' $mon_log_perso
+  cp $fichier_log_perso /var/log/$mon_script_base-last.log
 else
   echo -e "\e[43m-- FIN DE SCRIPT: $fin_script --\e[0m"
 fi
