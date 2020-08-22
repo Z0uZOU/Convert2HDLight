@@ -364,6 +364,7 @@ if [[ "$compare" != "" ]] ; then
     echo "mv $mon_script_fichier_temp $mon_script_fichier" >> $mon_script_updater
     echo "chmod +x $mon_script_fichier" >> $mon_script_updater
     echo "chmod 777 $mon_script_fichier" >> $mon_script_updater
+    echo "echo mise à jour mise en place" >> $mon_script_updater
     echo "bash $mon_script_fichier $@" >> $mon_script_updater
   else
     echo "shc -f $mon_script_fichier_temp -o $mon_script_fichier" >> $mon_script_updater
