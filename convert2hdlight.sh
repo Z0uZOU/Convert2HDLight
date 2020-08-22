@@ -192,7 +192,7 @@ for parametre in $@; do
     echo "  --force-encodage        Permet de force l'encodage si le média détecté est en 3D"
     echo "  --source:/emplacement/  Définit l'emplacement de la source des fichiers à convertir"
     echo ""
-    echo "Les options \"--debug\", \"--extra-log\", \"--ignore-range\", \"--ignore-filebot\", \"--force-encodage\" et \"--source:\" sont cumulables"
+    echo "Les options \"--debug\", \"--extra-log\", \"--ignore-range\", \"--filebot\", \"--force-encodage\" et \"--source:\" sont cumulables"
     echo ""
     echo -e "\e[4mUtilisation avancée:\e[0m"
     echo "  --message=\"...\"         Envoie un message push au développeur (urgence uniquement)"
