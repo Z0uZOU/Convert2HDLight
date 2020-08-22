@@ -188,7 +188,7 @@ for parametre in $@; do
     echo "  --help                  Affiche ce menu"
     echo "  --stop-convert          Stoppe le programme après la fin de la conversion en cours"
     echo "  --ignore-range          Permet d'ignorer le fichier \"range.conf\""
-    echo "  --ignore-filebot        Permet d'ignorer le renommage du fichier par FileBot"
+    echo "  --filebot               Permet le renommage du fichier par FileBot"
     echo "  --force-encodage        Permet de force l'encodage si le média détecté est en 3D"
     echo "  --source:/emplacement/  Définit l'emplacement de la source des fichiers à convertir"
     echo ""
@@ -209,10 +209,10 @@ for parametre in $@; do
     ignore_range="oui"
   fi
   
-  if [[ "$parametre" == "--ignore-filebot" ]]; then
-    ignore_filebot="oui"
+  if [[ "$parametre" == "--filebot" ]]; then
+    rennomage_filebot="oui"
   else
-    ignore_filebot="non"
+    rennomage_filebot="non"
   fi
   
   if [[ "$parametre" == "--force-encodage" ]]; then
@@ -1125,7 +1125,7 @@ if [[ "$mes_medias" != "" ]] ; then
           echec_conversion="0"
           if [[ "$mediainfo_duree" == "$mediainfo_duree_enc" ]]; then
             eval 'echo -e "[..... |\e[42m CONVERSION REUSSIE, REMPLACEMENT ET MISE EN PLACE \e[0m|"' $mon_log_perso
-            if [[ "$ignore_filebot" == "non" ]]; then
+            if [[ "$rennomage_filebot" == "oui" ]]; then
               if [[ "$categorie" == "Film" ]]; then
                 agent="TheMovieDB"
                 format="movieFormat"
