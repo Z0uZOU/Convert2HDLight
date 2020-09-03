@@ -14,7 +14,7 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.74" #base du système de mise à jour
+version="Version: 0.0.1.75" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/Changelog/convert2hdlight" #emplacement du changelog de ce script
@@ -1148,18 +1148,22 @@ if [[ "$mes_medias" != "" ]] ; then
               printf "$mon_printf" && printf "\r"
               sed -i '/MOVE/!d' $dossier_config/traitement.txt
               fichier_filebot=`cat $dossier_config/traitement.txt | grep "MOVE" | cut -d'[' -f3 | sed 's/].*//g'`
-              nombre_crochet=`cat $dossier_config/traitement.txt | grep -o "\[" | wc -m`
-              if [[ "$nombre_crochet" == "6" ]]; then
-                fichier_filebot=`cat $dossier_config/traitement.txt | grep "MOVE" | cut -d'[' -f4 | sed 's/].*//g'`
-              fi
-              if [[ "$nombre_crochet" == "8" ]]; then
-                fichier_filebot=`cat $dossier_config/traitement.txt | grep "MOVE" | cut -d'[' -f5 | sed 's/].*//g'`
-              fi
-              if [[ "$nombre_crochet" == "10" ]]; then
-                fichier_filebot=`cat $dossier_config/traitement.txt | grep "MOVE" | cut -d'[' -f6 | sed 's/].*//g'`
-              fi
-              fichier=`basename "$fichier_filebot"`
-              eval 'echo -e "[..... |\e[42m FILEBOT  \e[0m| Renommage du fichier en : $fichier"' $mon_log_perso
+              if [[ "$fichier_filebot" == "" ]]; then
+                eval 'echo -e "[..... |\e[42m FILEBOT  \e[0m| Nommage du fichier conforme : $fichier"' $mon_log_perso			  
+			           else
+  		       	    nombre_crochet=`cat $dossier_config/traitement.txt | grep -o "\[" | wc -m`
+                if [[ "$nombre_crochet" == "6" ]]; then
+                  fichier_filebot=`cat $dossier_config/traitement.txt | grep "MOVE" | cut -d'[' -f4 | sed 's/].*//g'`
+                fi
+                if [[ "$nombre_crochet" == "8" ]]; then
+                  fichier_filebot=`cat $dossier_config/traitement.txt | grep "MOVE" | cut -d'[' -f5 | sed 's/].*//g'`
+                fi
+                if [[ "$nombre_crochet" == "10" ]]; then
+                  fichier_filebot=`cat $dossier_config/traitement.txt | grep "MOVE" | cut -d'[' -f6 | sed 's/].*//g'`
+                fi
+                fichier=`basename "$fichier_filebot"`
+                eval 'echo -e "[..... |\e[42m FILEBOT  \e[0m| Renommage du fichier en : $fichier"' $mon_log_perso
+			           fi
               mv "$dossier_cible/$fichier" "$dossier_cible/$fichier-part"
               rm -f traitement.txt
             fi
