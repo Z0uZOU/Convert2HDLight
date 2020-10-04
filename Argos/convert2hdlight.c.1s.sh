@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-version="0.0.0.27"
+version="0.0.0.28"
 
 #### Nettoyage
 if [[ -f "~/convert2hdlight-update.sh" ]]; then
@@ -163,6 +163,7 @@ if [[ $title != "Encodage terminé" ]] && [[ $title != "..." ]] && [[ $title != 
   file=`cat $in_progress | sed -n '3p'`
   folder_in=$(dirname "$(cat $in_progress | sed -n '2p')")
   folder_out=`cat $in_progress | sed -n '4p'`
+  log=`cat $in_progress | sed -n '5p'`
   size_file=`ls -l "$folder_in/$fichier" | awk '{print $5}'`
   size_file=`humanise $size_file`
   size_folder_in=`df -Hl "$folder_in" | grep '/dev/' | awk '{print $4}' | sed 's/M/ Mo/' | sed 's/T/ To/' | sed 's/G/ Go/'`
@@ -377,6 +378,9 @@ if [[ "$file" != "" ]]; then
     fi
   else
     echo "Aucune correspondance"
+  fi
+  if [[ "$log" != "" ]]; then
+    printf "\e[1m%-10s\e[0m : %s | ansi=true font='Ubuntu Mono' trim=false \n" "Log" "$log"
   fi
 fi
 echo "---"
