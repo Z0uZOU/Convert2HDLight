@@ -14,7 +14,7 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.78" #base du système de mise à jour
+version="Version: 0.0.1.79" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/Changelog/convert2hdlight" #emplacement du changelog de ce script
@@ -1247,7 +1247,9 @@ if [[ "$mes_medias" != "" ]] ; then
           fi
           if [[ "$echec_conversion" == "0" ]] ; then
             ## rm "$mon_media"
-            trash-put "$mon_media"
+            ##trash-put "$mon_media"
+            if [[ ! -d "$dossier_cible_traite" ]]; then mkdir -p "$dossier_cible_traite"; fi
+            mv "$mon_media" $dossier_cible_traite
           else
             eval 'echo -e "[..... |\e[41m LE FICHIER ORIGINAL EST CONSERVÉ \e[0m|"' $mon_log_perso
           fi
