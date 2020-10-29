@@ -1080,11 +1080,11 @@ if [[ "$mes_medias" != "" ]] ; then
               echo "$mon_media" >> /opt/scripts/.$mon_script_base
               echo "$fichier" >> /opt/scripts/.$mon_script_base
               echo "$dossier_cible" >> /opt/scripts/.$mon_script_base
-	      echo "$categorie" >> /opt/scripts/.$mon_script_base
-	      if [[ "$categorie" == "Film" ]]; then
+              echo "$categorie" >> /opt/scripts/.$mon_script_base
+              if [[ "$categorie" == "Film" ]]; then
                 echo "$film_titre_fr ($film_annee)" >> /opt/scripts/.$mon_script_base
               else
-                echo "$serie_nom_fr ("$serie_saison"x"$serie_episode)" >> /opt/scripts/.$mon_script_base
+                echo "$serie_nom_fr ("$serie_saison"x$serie_episode)" >> /opt/scripts/.$mon_script_base
               fi
               if [[ "$mon_log_perso" != "" ]]; then
                 echo "$fichier_log_perso" >> /opt/scripts/.$mon_script_base
@@ -1095,11 +1095,11 @@ if [[ "$mes_medias" != "" ]] ; then
               echo "$mon_media" >> /opt/scripts/.$mon_script_base
               echo "$fichier" >> /opt/scripts/.$mon_script_base
               echo "$dossier_cible" >> /opt/scripts/.$mon_script_base
-	      echo "$categorie" >> /opt/scripts/.$mon_script_base
-	      if [[ "$categorie" == "Film" ]]; then
+              echo "$categorie" >> /opt/scripts/.$mon_script_base
+              if [[ "$categorie" == "Film" ]]; then
                 echo "$film_titre_fr ($film_annee)" >> /opt/scripts/.$mon_script_base
               else
-                echo "$serie_nom_fr ("$serie_saison"x"$serie_episode)" >> /opt/scripts/.$mon_script_base
+                echo "$serie_nom_fr ("$serie_saison"x$serie_episode)" >> /opt/scripts/.$mon_script_base
               fi
               if [[ "$mon_log_perso" != "" ]]; then
                 echo "$fichier_log_perso" >> /opt/scripts/.$mon_script_base
