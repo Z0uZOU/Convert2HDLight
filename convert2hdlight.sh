@@ -14,7 +14,7 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.83" #base du système de mise à jour
+version="Version: 0.0.1.84" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/Changelog/convert2hdlight" #emplacement du changelog de ce script
@@ -874,7 +874,7 @@ if [[ "$mes_medias" != "" ]] ; then
       mediainfo_langue_codec_clean=`echo $mediainfo_langue_codec | sed 's/\[//g' | sed 's/\]//g'`
       
 #### Sauvegarde des caractéristiques du média
-      if [[ -d "$chemin_argos" ]]; then
+      if [[ -d "$chemin_argos" ]] && [[ "$activer_argos" == "oui" ]]; then
         if [[ ! -d "$chemin_argos/convert2hdlight/temp" ]]; then
           mkdir -p $chemin_argos/convert2hdlight/temp
         else
@@ -883,33 +883,34 @@ if [[ "$mes_medias" != "" ]] ; then
         echo "$mediainfo_duree" > $chemin_argos/convert2hdlight/temp/mediainfo_duree.txt
         echo "$mediainfo_resolution" > $chemin_argos/convert2hdlight/temp/mediainfo_resolution.txt
         echo "$mediainfo_langue_clean" > $chemin_argos/convert2hdlight/temp/mediainfo_langue.txt
-        
-        if [[ "$categorie" == "Film" ]]; then
-          filebot --action test -script fn:amc --db TheMovieDB -non-strict --conflict override --lang fr --encoding UTF-8 --mode rename "$mon_media" --def minFileSize=0 --def "movieFormat=/opt/scripts/TEMP/#0¢{localize.English.n}#1¢{localize.French.n}#2¢{y}#3¢{id}#4¢{imdbid}#5¢{localize.French.genres}#6¢{rating}#7¢{info.ProductionCountries}#8¢{info.overview}#9¢" 2>/dev/null > $dossier_config/mediainfo.txt &
-          pid=$!
-          spin='-\|/'
-          i=0
-          while kill -0 $pid 2>/dev/null
-          do
-            i=$(( (i+1) %4 ))
-            printf "\rRécupération des informations du film... ${spin:$i:1}"
-            sleep .1
-          done
-          printf "$mon_printf" && printf "\r"
-          verif_bonne_detection=`cat $dossier_config/mediainfo.txt | grep "TEST" | grep "/TV Shows/"`
-          if [[ "$verif_bonne_detection" != "" ]]; then
-            echo "Fichier non-valide" > $dossier_config/mediainfo.txt
-          else
-            film_titre_en=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#0¢//' | sed 's/#1¢.*//'`
-            film_titre_fr=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#1¢//' | sed 's/#2¢.*//'`
-            film_annee=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#2¢//' | sed 's/#3¢.*//'`
-            film_tmdb_id=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#3¢//' | sed 's/#4¢.*//'`
-            film_imdb_id=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#4¢//' | sed 's/#5¢.*//'`
-            film_genres=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#5¢//' | sed 's/#6¢.*//'`
-            film_note=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#6¢//' | sed 's/#7¢.*//'`
-            film_origine=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#7¢//' | sed 's/#8¢.*//'`
-            #film_synopsis=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#8¢//' | sed 's/#9¢.*//'`
-            url_tmdb="https://www.themoviedb.org/movie/$film_tmdb_id/fr"
+      fi
+      if [[ "$categorie" == "Film" ]]; then
+        filebot --action test -script fn:amc --db TheMovieDB -non-strict --conflict override --lang fr --encoding UTF-8 --mode rename "$mon_media" --def minFileSize=0 --def "movieFormat=/opt/scripts/TEMP/#0¢{localize.English.n}#1¢{localize.French.n}#2¢{y}#3¢{id}#4¢{imdbid}#5¢{localize.French.genres}#6¢{rating}#7¢{info.ProductionCountries}#8¢{info.overview}#9¢" 2>/dev/null > $dossier_config/mediainfo.txt &
+        pid=$!
+        spin='-\|/'
+        i=0
+        while kill -0 $pid 2>/dev/null
+        do
+          i=$(( (i+1) %4 ))
+          printf "\rRécupération des informations du film... ${spin:$i:1}"
+          sleep .1
+        done
+        printf "$mon_printf" && printf "\r"
+        verif_bonne_detection=`cat $dossier_config/mediainfo.txt | grep "TEST" | grep "/TV Shows/"`
+        if [[ "$verif_bonne_detection" != "" ]]; then
+          echo "Fichier non-valide" > $dossier_config/mediainfo.txt
+        else
+          film_titre_en=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#0¢//' | sed 's/#1¢.*//'`
+          film_titre_fr=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#1¢//' | sed 's/#2¢.*//'`
+          film_annee=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#2¢//' | sed 's/#3¢.*//'`
+          film_tmdb_id=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#3¢//' | sed 's/#4¢.*//'`
+          film_imdb_id=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#4¢//' | sed 's/#5¢.*//'`
+          film_genres=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#5¢//' | sed 's/#6¢.*//'`
+          film_note=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#6¢//' | sed 's/#7¢.*//'`
+          film_origine=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#7¢//' | sed 's/#8¢.*//'`
+          #film_synopsis=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#8¢//' | sed 's/#9¢.*//'`
+          url_tmdb="https://www.themoviedb.org/movie/$film_tmdb_id/fr"
+          if [[ -d "$chemin_argos" ]] && [[ "$activer_argos" == "oui" ]]; then
             wget -q -O- $url_tmdb | grep "\"description\"" | sed -n '1p' | sed 's/.*content=\"//' | sed 's/\".*//' > $chemin_argos/convert2hdlight/temp/film_synopsis.txt
             if [[ ! -d "$chemin_argos/convert2hdlight/Covers/Films" ]]; then
               mkdir -p $chemin_argos/convert2hdlight/Covers/Films
@@ -926,7 +927,7 @@ if [[ "$mes_medias" != "" ]] ; then
                 printf "\rRécupération de la cover du film... ${spin:$i:1}"
                 sleep .1
               done
-              printf "$mon_printf" && printf "\r"
+             printf "$mon_printf" && printf "\r"
               url_tmdb_cover=`cat $dossier_config/url_tmdb.txt`
               wget -q "$url_tmdb_cover" -O "$chemin_argos/convert2hdlight/Covers/Films/$film_tmdb_id.jpg" &
               pid=$!
@@ -940,7 +941,6 @@ if [[ "$mes_medias" != "" ]] ; then
               done
               printf "$mon_printf" && printf "\r"
             fi
-            
             echo "$film_titre_en" > $chemin_argos/convert2hdlight/temp/film_titre_en.txt
             echo "$film_titre_fr" > $chemin_argos/convert2hdlight/temp/film_titre_fr.txt
             echo "$film_annee" > $chemin_argos/convert2hdlight/temp/film_annee.txt
@@ -951,35 +951,35 @@ if [[ "$mes_medias" != "" ]] ; then
             echo "$film_origine" > $chemin_argos/convert2hdlight/temp/film_origine.txt
             #echo "$film_synopsis" > $chemin_argos/convert2hdlight/temp/film_synopsis.txt
           fi
-          rm -f $dossier_config/mediainfo.txt
+        fi
+      else
+        filebot --action test -script fn:amc --db TheTVDB -non-strict --conflict override --lang fr --encoding UTF-8 --mode rename "$mon_media" --def minFileSize=0 --def "seriesFormat=/opt/scripts/TEMP/#0¢{localize.English.n}#1¢{localize.French.n}#2¢{y}#3¢{id}#4¢{airdate}#5¢{genres}#6¢{rating}#7¢{s}#8¢{e.pad(2)}#9¢{localize.French.t}#10¢{localize.English.t}#11¢" 2>/dev/null > $dossier_config/mediainfo.txt &
+        pid=$!
+        spin='-\|/'
+        i=0
+        while kill -0 $pid 2>/dev/null
+        do
+          i=$(( (i+1) %4 ))
+          printf "\rRécupération des informations de la série... ${spin:$i:1}"
+          sleep .1
+        done
+        printf "$mon_printf" && printf "\r"
+        verif_bonne_detection=`cat $dossier_config/mediainfo.txt | grep "TEST" | grep "/Movies/"`
+        if [[ "$verif_bonne_detection" != "" ]]; then
+          echo "Fichier non-valide" > $dossier_config/mediainfo.txt
         else
-          filebot --action test -script fn:amc --db TheTVDB -non-strict --conflict override --lang fr --encoding UTF-8 --mode rename "$mon_media" --def minFileSize=0 --def "seriesFormat=/opt/scripts/TEMP/#0¢{localize.English.n}#1¢{localize.French.n}#2¢{y}#3¢{id}#4¢{airdate}#5¢{genres}#6¢{rating}#7¢{s}#8¢{e.pad(2)}#9¢{localize.French.t}#10¢{localize.English.t}#11¢" 2>/dev/null > $dossier_config/mediainfo.txt &
-          pid=$!
-          spin='-\|/'
-          i=0
-          while kill -0 $pid 2>/dev/null
-          do
-            i=$(( (i+1) %4 ))
-            printf "\rRécupération des informations de la série... ${spin:$i:1}"
-            sleep .1
-          done
-          printf "$mon_printf" && printf "\r"
-          verif_bonne_detection=`cat $dossier_config/mediainfo.txt | grep "TEST" | grep "/Movies/"`
-          if [[ "$verif_bonne_detection" != "" ]]; then
-            echo "Fichier non-valide" > $dossier_config/mediainfo.txt
-          else
-            serie_nom_en=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#0¢//' | sed 's/#1¢.*//'`
-            serie_nom_fr=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#1¢//' | sed 's/#2¢.*//'`
-            serie_annee=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#2¢//' | sed 's/#3¢.*//'`
-            serie_tvdb_id=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#3¢//' | sed 's/#4¢.*//'`
-            serie_diffusion_episode=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#4¢//' | sed 's/#5¢.*//'`
-            serie_genres=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#5¢//' | sed 's/#6¢.*//'`
-            serie_note=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#6¢//' | sed 's/#7¢.*//'`
-            serie_saison=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#7¢//' | sed 's/#8¢.*//'`
-            serie_episode=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#8¢//' | sed 's/#9¢.*//'`
-            serie_titre_fr=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#9¢//' | sed 's/#10¢.*//'`
-            serie_titre_en=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#10¢//' | sed 's/#11¢.*//'`
-            
+          serie_nom_en=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#0¢//' | sed 's/#1¢.*//'`
+          serie_nom_fr=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#1¢//' | sed 's/#2¢.*//'`
+          serie_annee=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#2¢//' | sed 's/#3¢.*//'`
+          serie_tvdb_id=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#3¢//' | sed 's/#4¢.*//'`
+          serie_diffusion_episode=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#4¢//' | sed 's/#5¢.*//'`
+          serie_genres=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#5¢//' | sed 's/#6¢.*//'`
+          serie_note=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#6¢//' | sed 's/#7¢.*//'`
+          serie_saison=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#7¢//' | sed 's/#8¢.*//'`
+          serie_episode=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#8¢//' | sed 's/#9¢.*//'`
+          serie_titre_fr=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#9¢//' | sed 's/#10¢.*//'`
+          serie_titre_en=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#10¢//' | sed 's/#11¢.*//'`
+          if [[ -d "$chemin_argos" ]] && [[ "$activer_argos" == "oui" ]]; then
             if [[ ! -d "$chemin_argos/convert2hdlight/Covers/Séries" ]]; then
               mkdir -p $chemin_argos/convert2hdlight/Covers/Séries
             fi
@@ -996,7 +996,6 @@ if [[ "$mes_medias" != "" ]] ; then
               done
               printf "$mon_printf" && printf "\r"
             fi
-
             echo "$serie_nom_en" > $chemin_argos/convert2hdlight/temp/serie_nom_en.txt
             echo "$serie_nom_fr" > $chemin_argos/convert2hdlight/temp/serie_nom_fr.txt
             echo "$serie_annee" > $chemin_argos/convert2hdlight/temp/serie_annee.txt
@@ -1009,10 +1008,10 @@ if [[ "$mes_medias" != "" ]] ; then
             echo "$serie_titre_fr" > $chemin_argos/convert2hdlight/temp/serie_titre_fr.txt
             echo "$serie_titre_en" > $chemin_argos/convert2hdlight/temp/serie_titre_en.txt
           fi
-          rm -f $dossier_config/mediainfo.txt
-        fi
-        chmod 777 -R $chemin_argos/convert2hdlight
-      fi      
+		fi
+      fi
+      if [[ -d "$chemin_argos" ]]; then chmod 777 -R $chemin_argos/convert2hdlight; fi
+      rm -f $dossier_config/mediainfo.txt
       eval 'echo -e "[..... |\e[7m ORIGINAL \e[0m| taille : $mediainfo_taille Go"' $mon_log_perso
       eval 'echo -e "[..... |\e[7m ORIGINAL \e[0m| durée : $mediainfo_duree mn"' $mon_log_perso
       eval 'echo -e "[..... |\e[7m ORIGINAL \e[0m| résolution : $mediainfo_resolution ($mediainfo_codec - $mediainfo_bitrate)"' $mon_log_perso
