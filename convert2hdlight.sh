@@ -457,6 +457,7 @@ script_url=""
 dossier_source="/mnt/sdc1/Handbrake/A_Convertir"
 ## Cibles
 dossier_cible="/mnt/sdc1/Handbrake/Converti"
+dossier_cible_traite="/mnt/sdc1/Handbrake/Traité"
 dossier_cible_erreur="/mnt/sdc1/Handbrake/Erreur"
 dossier_cible_media_3D="/mnt/sdc1/Handbrake/Media_3D"
 dossier_filebot_films="/mnt/sdc1/Downloads/Films_Hdlight"
