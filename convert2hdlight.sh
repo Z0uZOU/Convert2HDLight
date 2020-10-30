@@ -1256,7 +1256,7 @@ if [[ "$mes_medias" != "" ]] ; then
             ##mv "$mon_media" "$dossier_cible_traite"
             ##chmod 777 "$dossier_cible_traite"
             main_user=`getent passwd "1000" | cut -d: -f1`
-            trash_path=`df -h "$mon_media" |tail -1 | awk -F% '{print $NF}' | tr -d ' '`
+            trash_path=`df -h "$mon_media" | tail -1 | awk -F% '{print $NF}' | tr -d ' '`
             if [[ "$trash_path" == "/" ]]; then
               trash_path="/home/$main_user/.local/share/Trash/files"
             else
