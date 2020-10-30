@@ -14,7 +14,7 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.85" #base du système de mise à jour
+version="Version: 0.0.1.86" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/Changelog/convert2hdlight" #emplacement du changelog de ce script
@@ -1256,14 +1256,18 @@ if [[ "$mes_medias" != "" ]] ; then
             ##mv "$mon_media" "$dossier_cible_traite"
             ##chmod 777 "$dossier_cible_traite"
             main_user=`getent passwd "1000" | cut -d: -f1`
-            trash_path=`df -h /mnt/sdc1/Handbrake/A_Convertir/ |tail -1 | awk -F% '{print $NF}' | tr -d ' '`
+            trash_path=`df -h "$mon_media" |tail -1 | awk -F% '{print $NF}' | tr -d ' '`
             if [[ "$trash_path" == "/" ]]; then
               trash_path="/home/$main_user/.local/share/Trash/files"
-			else
-			  trash_path=`echo "$trash_path/.Trash-1000/files"`
-			fi
+            else
+              trash_path=`echo "$trash_path/.Trash-1000/files"`
+            fi
             chown $main_user:$main_user "$mon_media"
-            mv "$mon_media" "$trash_path"
+            if [[ ! -d "$trash_path" ]]; then
+	      mkdir -p "$trash_path"
+	      chown $main_user:$main_user -R "$trash_path"
+	    fi
+	    mv "$mon_media" "$trash_path"
           else
             eval 'echo -e "[..... |\e[41m LE FICHIER ORIGINAL EST CONSERVÉ \e[0m|"' $mon_log_perso
           fi
