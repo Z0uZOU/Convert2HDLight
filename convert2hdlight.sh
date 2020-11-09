@@ -14,7 +14,7 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.86" #base du système de mise à jour
+version="Version: 0.0.1.87" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/Changelog/convert2hdlight" #emplacement du changelog de ce script
@@ -650,10 +650,10 @@ chemin_argos=`locate "/.config/argos/" | sed '/\/home\//!d' | sed 's/\/.config.*
 if [[ "$chemin_argos" != "" ]]; then
   chemin_argos+="/.config/argos"
   if [[ ! -f "$chemin_argos/convert2hdlight.c.1s.sh" ]]; then
-    wget -q $mon_script_argos_github -O $chemin_argos/convert2hdlight.c.1s.sh && sed -i -e 's/\r//g' $chemin_argos/convert2hdlight.c.1s.sh && chmod 777 $chemin_argos/convert2hdlight.c.1s.sh && chmod -x $chemin_argos/convert2hdlight.c.1s.sh
+    wget -q "$mon_script_argos_github" -O "$chemin_argos/convert2hdlight.c.1s.sh" && sed -i -e 's/\r//g' "$chemin_argos/convert2hdlight.c.1s.sh" && chmod 777 "$chemin_argos/convert2hdlight.c.1s.sh" && chmod -x "$chemin_argos/convert2hdlight.c.1s.sh"
   else
     if [[ -x "$chemin_argos/convert2hdlight.c.1s.sh" ]]; then
-      chmod -x $chemin_argos/convert2hdlight.c.1s.sh
+      chmod -x "$chemin_argos/convert2hdlight.c.1s.sh"
     fi
   fi
 fi
@@ -832,7 +832,7 @@ if [[ "$mes_medias" != "" ]] ; then
   #### Activation du script argos
   if [[ -f "$chemin_argos/convert2hdlight.c.1s.sh" ]]; then
     echo "..." > /opt/scripts/.$mon_script_base
-    if [[ "$activer_argos" == "oui" ]]; then chmod +x $chemin_argos/convert2hdlight.c.1s.sh; fi 
+    if [[ "$activer_argos" == "oui" ]]; then chmod +x "$chemin_argos/convert2hdlight.c.1s.sh"; fi 
   fi
   for mon_media in "${mes_medias[@]}"; do
     ## vérification que le fichiers de ne soit pas en copie/déplacement
@@ -1315,7 +1315,7 @@ if [[ "$mes_medias" != "" ]] ; then
   done
   #### Désactivation du script argos
   if [[ -f "$chemin_argos/convert2hdlight.c.1s.sh" ]]; then
-    chmod -x $chemin_argos/convert2hdlight.c.1s.sh 
+    chmod -x "$chemin_argos/convert2hdlight.c.1s.sh"
   fi
   
   #### Suppression des dossiers vides
@@ -1369,7 +1369,9 @@ if [[ "$mes_medias" != "" ]] ; then
   fi
 else
   if [[ -f "$chemin_argos/convert2hdlight.c.1s.sh" ]]; then
-    chmod -x $chemin_argos/convert2hdlight.c.1s.sh
+    if [[ -x "$chemin_argos/convert2hdlight.c.1s.sh" ]]; then
+      chmod -x "$chemin_argos/convert2hdlight.c.1s.sh"
+    fi
   fi
   eval 'echo -e "[\e[41m\u2717 \e[0m] Aucun média trouvé"' $mon_log_perso
 fi
