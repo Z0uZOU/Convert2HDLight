@@ -1008,7 +1008,7 @@ if [[ "$mes_medias" != "" ]] ; then
             echo "$serie_titre_fr" > $chemin_argos/convert2hdlight/temp/serie_titre_fr.txt
             echo "$serie_titre_en" > $chemin_argos/convert2hdlight/temp/serie_titre_en.txt
           fi
-		fi
+        fi
       fi
       if [[ -d "$chemin_argos" ]]; then chmod 777 -R $chemin_argos/convert2hdlight; fi
       rm -f $dossier_config/mediainfo.txt
