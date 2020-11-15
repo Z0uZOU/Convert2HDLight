@@ -1088,9 +1088,6 @@ if [[ "$mes_medias" != "" ]] ; then
                 echo "$serie_nom_fr ("$serie_saison"x$serie_episode)" >> /opt/scripts/.$mon_script_base
               fi
               tail -1 /root/.config/convert2hdlight/ma_conversion.txt | awk '{print $NF}' | sed "s/)//" >> /opt/scripts/.$mon_script_base
-              if [[ "$mon_log_perso" != "" ]]; then
-                echo "$fichier_log_perso" >> /opt/scripts/.$mon_script_base
-              fi
             else
               printf "\rEncodage en cours... ${spin:$e:1}"
               echo "Encodage en cours" > /opt/scripts/.$mon_script_base
@@ -1104,9 +1101,6 @@ if [[ "$mes_medias" != "" ]] ; then
                 echo "$serie_nom_fr ("$serie_saison"x$serie_episode)" >> /opt/scripts/.$mon_script_base
               fi
               tail -1 /root/.config/convert2hdlight/ma_conversion.txt | awk '{print $NF}' | sed "s/)//" >> /opt/scripts/.$mon_script_base
-              if [[ "$mon_log_perso" != "" ]]; then
-                echo "$fichier_log_perso" >> /opt/scripts/.$mon_script_base
-              fi
             fi
             sleep .1
           done
