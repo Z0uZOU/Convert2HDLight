@@ -821,7 +821,7 @@ eval 'echo -e "[\e[42m\u2713 \e[0m] Procédure de nettoyage terminée"' $mon_log
 eval 'echo -e "\e[44m\u2263\u2263  \e[0m \e[44m \e[1mRECHERCHE DE MÉDIAS  \e[0m \e[44m  \e[0m \e[44m \e[0m \e[34m\u2759\e[0m"' $mon_log_perso
 cd "$dossier_source"
 mes_medias=()
-find "$dossier_source" -type f -iname '*[avi|mp4|mkv]' -print0 >$dossier_config/tmpfile
+find "$dossier_source" -type f -iname '*[avi|mp4|mkv]' -print0 | sort -z >$dossier_config/tmpfile
 while IFS= read -r -d $'\0'; do
   mes_medias+=("$REPLY")
 done <$dossier_config/tmpfile
