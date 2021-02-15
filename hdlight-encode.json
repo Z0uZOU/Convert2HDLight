@@ -14,7 +14,8 @@
       ],
       "AudioEncoderFallback": "av_aac",
       "AudioLanguageList": [
-        "any"
+        "fra",
+        "eng"
       ],
       "AudioList": [
         {
@@ -82,7 +83,10 @@
       "SubtitleBurnBehavior": "foreign",
       "SubtitleBurnBDSub": false,
       "SubtitleBurnDVDSub": false,
-      "SubtitleLanguageList": [],
+      "SubtitleLanguageList": [
+        "fra",
+        "eng"
+      ],
       "SubtitleTrackSelectionBehavior": "all",
       "VideoAvgBitrate": 0,
       "VideoColorMatrixCode": 0,
