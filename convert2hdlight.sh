@@ -14,15 +14,12 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.90" #base du système de mise à jour
+version="Version: 0.0.1.91" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/Changelog/convert2hdlight" #emplacement du changelog de ce script
 icone_github="https://github.com/Z0uZOU/Convert2HDLight/raw/master/.cache-icons/convert2hdlight.png" #emplacement de l'icône du script
-#required_repos="ppa:neurobin/ppa ppa:webupd8team/java ppa:stebbins/handbrake-releases" #ajout de repository
-#required_repos="ppa:webupd8team/java ppa:stebbins/handbrake-releases" #ajout de repository
 required_repos="ppa:stebbins/handbrake-releases" #ajout de repository
-#required_tools="oracle-java8-installer handbrake-cli trash-cli curl mlocate lm-sensors shc mediainfo nemo" #dépendances du script
 required_tools="handbrake-cli trash-cli curl mlocate lm-sensors shc mediainfo nemo" #dépendances du script
 required_tools_pip="" #dépendances du script (PIP)
 script_cron="0 * * * *" #ne définir que la planification
@@ -833,7 +830,7 @@ if [[ "$mes_medias" != "" ]] ; then
   if [[ -f "$chemin_argos/convert2hdlight.c.1s.sh" ]]; then
     echo "..." > /opt/scripts/.$mon_script_base
     if [[ "$activer_argos" == "oui" ]]; then chmod +x "$chemin_argos/convert2hdlight.c.1s.sh"; fi 
-  fi
+	fi
   for mon_media in "${mes_medias[@]}"; do
     ## vérification que le fichiers de ne soit pas en copie/déplacement
     taille_1=`ls -al  "$mon_media" | awk '{print $5}'`
@@ -1013,7 +1010,8 @@ if [[ "$mes_medias" != "" ]] ; then
       if [[ -d "$chemin_argos" ]]; then chmod 777 -R $chemin_argos/convert2hdlight; fi
       rm -f $dossier_config/mediainfo.txt
       eval 'echo -e "[..... |\e[7m ORIGINAL \e[0m| taille : $mediainfo_taille Go"' $mon_log_perso
-      eval 'echo -e "[..... |\e[7m ORIGINAL \e[0m| durée : $mediainfo_duree mn"' $mon_log_perso
+      mediainfo_duree_clean=`printf '%dh %02dmin' $(($mediainfo_duree/60)) $(($mediainfo_duree%60))`
+	  eval 'echo -e "[..... |\e[7m ORIGINAL \e[0m| durée : $mediainfo_duree_clean"' $mon_log_perso
       eval 'echo -e "[..... |\e[7m ORIGINAL \e[0m| résolution : $mediainfo_resolution ($mediainfo_codec - $mediainfo_bitrate)"' $mon_log_perso
       eval 'echo -e "[..... |\e[7m ORIGINAL \e[0m| langue(s) : $mediainfo_langue_clean ($mediainfo_langue_codec_clean)"' $mon_log_perso
       if [[ "$mediainfo_3d" != "" ]] && [[ "$force_encodage" == "non" ]]; then
@@ -1136,7 +1134,8 @@ if [[ "$mes_medias" != "" ]] ; then
           mediainfo_langue_enc_clean=`echo $mediainfo_langue_enc | sed 's/\[//g' | sed 's/\]//g'`
           mediainfo_langue_codec_enc_clean=`echo $mediainfo_langue_codec_enc | sed 's/\[//g' | sed 's/\]//g'`
           eval 'echo -e "[..... |\e[7m CONVERTI \e[0m| taille : $mediainfo_taille_enc Go"' $mon_log_perso
-          eval 'echo -e "[..... |\e[7m CONVERTI \e[0m| durée : $mediainfo_duree_enc mn"' $mon_log_perso
+          mediainfo_duree_enc_clean=`printf '%dh %02dmin' $(($mediainfo_duree_enc/60)) $(($mediainfo_duree_enc%60))`
+          eval 'echo -e "[..... |\e[7m CONVERTI \e[0m| durée : $mediainfo_duree_enc_clean"' $mon_log_perso
           eval 'echo -e "[..... |\e[7m CONVERTI \e[0m| résolution : $mediainfo_resolution_enc ($mediainfo_codec_enc - $mediainfo_bitrate_enc)"' $mon_log_perso
           eval 'echo -e "[..... |\e[7m CONVERTI \e[0m| langue(s) : $mediainfo_langue_enc_clean ($mediainfo_langue_codec_enc_clean)"' $mon_log_perso
           mv "$dossier_cible/$fichier" "$dossier_cible/$fichier-part"
