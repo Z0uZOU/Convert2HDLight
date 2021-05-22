@@ -14,7 +14,7 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.91" #base du système de mise à jour
+version="Version: 0.0.1.92" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/Changelog/convert2hdlight" #emplacement du changelog de ce script
@@ -882,7 +882,7 @@ if [[ "$mes_medias" != "" ]] ; then
         echo "$mediainfo_langue_clean" > $chemin_argos/convert2hdlight/temp/mediainfo_langue.txt
       fi
       if [[ "$categorie" == "Film" ]]; then
-        filebot --action test -script fn:amc --db TheMovieDB -non-strict --conflict override --lang fr --encoding UTF-8 --mode rename "$mon_media" --def minFileSize=0 --def "movieFormat=/opt/scripts/TEMP/#0¢{localize.English.n}#1¢{localize.French.n}#2¢{y}#3¢{id}#4¢{imdbid}#5¢{localize.French.genres}#6¢{rating}#7¢{info.ProductionCountries}#8¢{info.overview}#9¢" 2>/dev/null > $dossier_config/mediainfo.txt &
+        filebot --action test -script fn:amc -non-strict --conflict override --lang fr --encoding UTF-8 --mode rename "$mon_media" --def minFileSize=0 --def "movieFormat=/opt/scripts/TEMP/#0¢{localize.English.n}#1¢{localize.French.n}#2¢{y}#3¢{id}#4¢{imdbid}#5¢{localize.French.genres}#6¢{rating}#7¢{info.ProductionCountries}#8¢{info.overview}#9¢" 2>/dev/null > $dossier_config/mediainfo.txt &
         pid=$!
         spin='-\|/'
         i=0
@@ -950,7 +950,7 @@ if [[ "$mes_medias" != "" ]] ; then
           fi
         fi
       else
-        filebot --action test -script fn:amc --db TheTVDB -non-strict --conflict override --lang fr --encoding UTF-8 --mode rename "$mon_media" --def minFileSize=0 --def "seriesFormat=/opt/scripts/TEMP/#0¢{localize.English.n}#1¢{localize.French.n}#2¢{y}#3¢{id}#4¢{airdate}#5¢{genres}#6¢{rating}#7¢{s}#8¢{e.pad(2)}#9¢{localize.French.t}#10¢{localize.English.t}#11¢" 2>/dev/null > $dossier_config/mediainfo.txt &
+        filebot --action test -script fn:amc -non-strict --conflict override --lang fr --encoding UTF-8 --mode rename "$mon_media" --def minFileSize=0 --def "seriesFormat=/opt/scripts/TEMP/#0¢{localize.English.n}#1¢{localize.French.n}#2¢{y}#3¢{id}#4¢{airdate}#5¢{genres}#6¢{rating}#7¢{s}#8¢{e.pad(2)}#9¢{localize.French.t}#10¢{localize.English.t}#11¢" 2>/dev/null > $dossier_config/mediainfo.txt &
         pid=$!
         spin='-\|/'
         i=0
@@ -1052,8 +1052,9 @@ if [[ "$mes_medias" != "" ]] ; then
             sensors 1>$dossier_config/tempcpu.txt 2>/dev/null
             #temperature=`cat $dossier_config/tempcpu.txt | grep -oP 'Core 0.*?\+\K[0-9]+'`
             temperature=`cat $dossier_config/tempcpu.txt | grep -oP 'Core 0.*?\+\K[0-9]+' | sed -n '1p'`
+            #temperature=`cat $dossier_config/tempcpu.txt | grep -oP 'Tdie.*?\+\K[0-9]+' | sed -n '1p'`
             rm -f $dossier_config/tempcpu.txt
-            if [[ "$temperature_max" == "" ]]; then temperature_max="85"; fi
+            if [[ "$temperature_max" == "" ]]; then temperature_max="95"; fi
             if [[ "$temperature" != "" ]]; then
               if [ "$temperature" -gt "$temperature_max" ]; then
                 kill -9 $pid
@@ -1153,7 +1154,7 @@ if [[ "$mes_medias" != "" ]] ; then
                 output="{n} - {sxe} - {t}"
               fi
               mv "$dossier_cible/$fichier-part" "$dossier_cible/$fichier"
-              filebot -script fn:amc --db $agent -non-strict --conflict override --lang fr --encoding UTF-8 --mode rename "$dossier_cible/$fichier" --def "$format=$output" > $dossier_config/traitement.txt 2>/dev/null &
+              filebot -script fn:amc -non-strict --conflict override --lang fr --encoding UTF-8 --mode rename "$dossier_cible/$fichier" --def "$format=$output" > $dossier_config/traitement.txt 2>/dev/null &
               pid=$!
               spin='-\|/'
               i=0
