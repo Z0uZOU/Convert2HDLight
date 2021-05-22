@@ -881,8 +881,9 @@ if [[ "$mes_medias" != "" ]] ; then
         echo "$mediainfo_resolution" > $chemin_argos/convert2hdlight/temp/mediainfo_resolution.txt
         echo "$mediainfo_langue_clean" > $chemin_argos/convert2hdlight/temp/mediainfo_langue.txt
       fi
+      $output_folder=`dirname "$mon_media"`
       if [[ "$categorie" == "Film" ]]; then
-        filebot --action test -script fn:amc -non-strict --conflict override --lang fr --encoding UTF-8 --mode rename "$mon_media" --def minFileSize=0 --def "movieFormat=/opt/scripts/TEMP/#0¢{localize.English.n}#1¢{localize.French.n}#2¢{y}#3¢{id}#4¢{imdbid}#5¢{localize.French.genres}#6¢{rating}#7¢{info.ProductionCountries}#8¢{info.overview}#9¢" 2>/dev/null > $dossier_config/mediainfo.txt &
+        filebot --action test -script fn:amc -non-strict --conflict override --lang fr --encoding UTF-8 -rename "$mon_media" --def minFileSize=0 --def "movieFormat=#0¢{localize.English.n}#1¢{localize.French.n}#2¢{y}#3¢{id}#4¢{imdbid}#5¢{localize.French.genres}#6¢{rating}#7¢{info.ProductionCountries}#8¢" --output "$output_folder" 2>/dev/null > $dossier_config/mediainfo.txt &
         pid=$!
         spin='-\|/'
         i=0
@@ -905,7 +906,6 @@ if [[ "$mes_medias" != "" ]] ; then
           film_genres=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#5¢//' | sed 's/#6¢.*//'`
           film_note=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#6¢//' | sed 's/#7¢.*//'`
           film_origine=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#7¢//' | sed 's/#8¢.*//'`
-          #film_synopsis=`cat $dossier_config/mediainfo.txt | grep "TEST" | sed 's/.*#8¢//' | sed 's/#9¢.*//'`
           url_tmdb="https://www.themoviedb.org/movie/$film_tmdb_id/fr"
           if [[ -d "$chemin_argos" ]] && [[ "$activer_argos" == "oui" ]]; then
             wget -q -O- $url_tmdb | grep "\"description\"" | sed -n '1p' | sed 's/.*content=\"//' | sed 's/\".*//' > $chemin_argos/convert2hdlight/temp/film_synopsis.txt
@@ -950,7 +950,7 @@ if [[ "$mes_medias" != "" ]] ; then
           fi
         fi
       else
-        filebot --action test -script fn:amc -non-strict --conflict override --lang fr --encoding UTF-8 --mode rename "$mon_media" --def minFileSize=0 --def "seriesFormat=/opt/scripts/TEMP/#0¢{localize.English.n}#1¢{localize.French.n}#2¢{y}#3¢{id}#4¢{airdate}#5¢{genres}#6¢{rating}#7¢{s}#8¢{e.pad(2)}#9¢{localize.French.t}#10¢{localize.English.t}#11¢" 2>/dev/null > $dossier_config/mediainfo.txt &
+        filebot --action test -script fn:amc -non-strict --conflict override --lang fr --encoding UTF-8 -rename "$mon_media" --def minFileSize=0 --def "seriesFormat=#0¢{localize.English.n}#1¢{localize.French.n}#2¢{y}#3¢{id}#4¢{airdate}#5¢{genres}#6¢{rating}#7¢{s}#8¢{e.pad(2)}#9¢{localize.French.t}#10¢{localize.English.t}#11¢" --output "$output_folder" 2>/dev/null > $dossier_config/mediainfo.txt &
         pid=$!
         spin='-\|/'
         i=0
@@ -1154,7 +1154,7 @@ if [[ "$mes_medias" != "" ]] ; then
                 output="{n} - {sxe} - {t}"
               fi
               mv "$dossier_cible/$fichier-part" "$dossier_cible/$fichier"
-              filebot -script fn:amc -non-strict --conflict override --lang fr --encoding UTF-8 --mode rename "$dossier_cible/$fichier" --def "$format=$output" > $dossier_config/traitement.txt 2>/dev/null &
+              filebot -script fn:amc -non-strict --conflict override --lang fr --encoding UTF-8 -rename "$dossier_cible/$fichier" --def "$format=$output" --output "$dossier_cible" > $dossier_config/traitement.txt 2>/dev/null &
               pid=$!
               spin='-\|/'
               i=0
