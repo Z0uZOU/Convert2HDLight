@@ -14,7 +14,7 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.92" #base du système de mise à jour
+version="Version: 0.0.1.93" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/Changelog/convert2hdlight" #emplacement du changelog de ce script
@@ -881,7 +881,7 @@ if [[ "$mes_medias" != "" ]] ; then
         echo "$mediainfo_resolution" > $chemin_argos/convert2hdlight/temp/mediainfo_resolution.txt
         echo "$mediainfo_langue_clean" > $chemin_argos/convert2hdlight/temp/mediainfo_langue.txt
       fi
-      $output_folder=`dirname "$mon_media"`
+      output_folder=`dirname "$mon_media"`
       if [[ "$categorie" == "Film" ]]; then
         filebot --action test -script fn:amc -non-strict --conflict override --lang fr --encoding UTF-8 -rename "$mon_media" --def minFileSize=0 --def "movieFormat=#0¢{localize.English.n}#1¢{localize.French.n}#2¢{y}#3¢{id}#4¢{imdbid}#5¢{localize.French.genres}#6¢{rating}#7¢{info.ProductionCountries}#8¢" --output "$output_folder" 2>/dev/null > $dossier_config/mediainfo.txt &
         pid=$!
