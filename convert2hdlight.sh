@@ -14,7 +14,7 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.93" #base du système de mise à jour
+version="Version: 0.0.1.94" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/Changelog/convert2hdlight" #emplacement du changelog de ce script
@@ -252,16 +252,18 @@ pid_script=`echo "/root/.config/"$mon_script_base"/lock-"$mon_script_base`
 if [[ "$maj_force" == "non" ]] ; then
   if [[ -f "$pid_script" ]] ; then
     echo "Il y a au moins un autre process du script en cours"
-    message_alerte=`echo -e "Un process bloque mon script sur $computer_name"`
-    ## petite notif pour Z0uZOU
-    curl -s \
-    --form-string "token=arocr9cyb3x5fdo7i4zy7e99da6hmx" \
-    --form-string "user=uauyi2fdfiu24k7xuwiwk92ovimgto" \
-    --form-string "title=$mon_script_base_maj HS" \
-    --form-string "message=$message_alerte" \
-    --form-string "html=1" \
-    --form-string "priority=1" \
-    https://api.pushover.net/1/messages.json > /dev/null
+    if [[ "$debug_dev" == "oui" ]]; then
+      message_alerte=`echo -e "Un process bloque mon script sur $computer_name"`
+      ## petite notif pour Z0uZOU
+      curl -s \
+      --form-string "token=arocr9cyb3x5fdo7i4zy7e99da6hmx" \
+      --form-string "user=uauyi2fdfiu24k7xuwiwk92ovimgto" \
+      --form-string "title=$mon_script_base_maj HS" \
+      --form-string "message=$message_alerte" \
+      --form-string "html=1" \
+      --form-string "priority=1" \
+      https://api.pushover.net/1/messages.json > /dev/null
+    if
     if [[ "$1" == "--menu" ]]; then
       read -rsp $'Appuyez sur une touche pour fermer la fenêtre...\n' -n1 key
     fi
@@ -465,6 +467,7 @@ dossier_filebot_series="/mnt/sdc1/Downloads/Séries_HQ"
 temperature_max="85"
  
 #### Paramètre du push
+debug_dev="non"
 ## ces réglages se trouvent sur le site http://www.pushover.net
 token_app=""
 destinataire_1=""
