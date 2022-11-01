@@ -31,7 +31,7 @@ lien_filebot="https://github.com/Z0uZOU/Convert2HDLight/tree/master/FileBot" #li
  
 
 #### Vérification de la présence du Net
-md5_404_not_found=`curl -s "https://raw.githubusercontent.com/Z0uZOU/ARKServer/master/404" | md5sum  | cut -f1 -d" "`
+md5_404_not_found=`curl -s "https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/404" | md5sum  | cut -f1 -d" "`
 
 #### Vérification de la langue du system
 if [[ "$@" =~ "--langue=" ]]; then
@@ -39,7 +39,7 @@ if [[ "$@" =~ "--langue=" ]]; then
 else
   affichage_langue=$(locale | grep LANG | sed -n '1p' | cut -d= -f2 | cut -d_ -f1)
 fi
-verif_langue=`curl -s "https://raw.githubusercontent.com/Z0uZOU/ARKServer/master/MUI/$affichage_langue.lang" | md5sum  | cut -f1 -d" "`
+verif_langue=`curl -s "https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/MUI/$affichage_langue.lang" | md5sum  | cut -f1 -d" "`
 if [[ "$verif_langue" == "$md5_404_not_found" ]]; then
   affichage_langue="en"
 fi
@@ -76,11 +76,12 @@ if [[ -f "$mon_script_langue" ]]; then
   distant_md5=`curl -s "https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/MUI/$affichage_langue.lang" | md5sum | cut -f1 -d" "`
   local_md5=`md5sum "$mon_script_langue" 2>/dev/null | cut -f1 -d" "`
   if [[ $distant_md5 != $local_md5 ]]; then
-    wget --quiet "https://raw.githubusercontent.com/Z0uZOU/Range/Convert2HDLight/MUI/$affichage_langue.lang" -O "$mon_script_langue"
+    wget --quiet "https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/MUI/$affichage_langue.lang" -O "$mon_script_langue"
     chmod +x "$mon_script_langue"
   fi
 else
-  wget --quiet "https://raw.githubusercontent.com/Z0uZOU/Range/Convert2HDLight/MUI/$affichage_langue.lang" -O "$mon_script_langue"
+  mkdir $mon_dossier_config"/MUI"
+  wget --quiet "https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/MUI/$affichage_langue.lang" -O "$mon_script_langue"
   chmod +x "$mon_script_langue"
 fi
 source $mon_script_langue
@@ -268,7 +269,6 @@ if [[ -f "$mon_script_updater" ]] ; then
   push-message "$mui_pushover_updated_title" "$mui_pushover_updated_msg" "1"
 fi
 
-
 #### Vérification de version pour éventuelle mise à jour
 distant_md5=`curl -s "$script_github" | md5sum | cut -f1 -d" "`
 local_md5=`md5sum "$0" 2>/dev/null | cut -f1 -d" "`
@@ -448,7 +448,6 @@ push_fin_script="non"
 ## Fin de configuration
 ####################################
 EOT
-EOT
   eval 'echo "$mui_no_conf_created"'
   eval 'echo "$mui_no_conf_edit"'
   eval 'echo "mui_no_conf_help"'
@@ -579,6 +578,26 @@ fi
 cd /opt/scripts
 
 
+
+
+end_of_script=`date`
+source $mon_script_langue
+my_title_count=`echo -n "$mui_end_of_script" | sed "s/\\\e\[[0-9]\{1,2\}m//g" | sed 's/é/e/g' | wc -c`
+line_lengh="78"
+before_count=$((($line_lengh-$my_title_count)/2))
+after_count=$(((($line_lengh-$my_title_count)%2)+$before_count))
+before=`eval printf "%0.s-" {1..$before_count}`
+after=`eval printf "%0.s-" {1..$after_count}`
+eval 'printf "\e[43m%s%s%s\e[0m\n" "$before" "$mui_end_of_script" "$after"' $mon_log_perso
+if [[ "$maj_necessaire" == "1" ]] && [[ -f "$fichier_log_perso" ]]; then
+  cp $fichier_log_perso /var/log/$mon_script_base-last.log
+fi
+rm "$mon_script_pid"
+
+if [[ "$1" == "--menu" ]]; then
+  read -rsp $'Press a key to close the window...\n' -n1 key
+fi
+exit 1
 
 
 ### OLD
