@@ -14,12 +14,14 @@
 ## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
-version="Version: 0.0.1.95" #base du système de mise à jour
+version="Version: 0.0.1.96" #base du système de mise à jour
 description="Convertisseur en HDLight" #description pour le menu
 script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh" #emplacement du script original
 changelog_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/Changelog/convert2hdlight" #emplacement du changelog de ce script
 icone_github="https://github.com/Z0uZOU/Convert2HDLight/raw/master/.cache-icons/convert2hdlight.png" #emplacement de l'icône du script
-required_repos="ppa:stebbins/handbrake-releases" #ajout de repository
+#required_repos="ppa:stebbins/handbrake-releases" #ajout de repository
+#required_tools="handbrake-cli trash-cli curl mlocate lm-sensors shc mediainfo nemo" #dépendances du script
+required_repos="" #ajout de repository
 required_tools="handbrake-cli trash-cli curl mlocate lm-sensors shc mediainfo nemo" #dépendances du script
 required_tools_pip="" #dépendances du script (PIP)
 script_cron="0 * * * *" #ne définir que la planification
