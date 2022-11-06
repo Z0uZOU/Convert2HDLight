@@ -62,7 +62,6 @@ if [[ "$net_connection" == "" ]]; then
   before=`eval printf "%0.s-" {1..$before_count}`
   after=`eval printf "%0.s-" {1..$after_count}`
   eval 'printf "\e[43m%s%s%s\e[0m\n" "$before" "$mui_end_of_script" "$after"' $mon_log_perso
-
   if [[ "$1" == "--menu" ]]; then
     read -rsp $'Press a key to close the window...\n' -n1 key
   fi
@@ -148,7 +147,7 @@ if [[ "$1" == "--stop-convert" ]]; then
   mon_stop=`echo "/root/.config/convert2hdlight/.stop-convert"`
   touch "$mon_stop"
   echo "Création du fichier .stop-convert"
-  exit 1
+  exit 0
 fi
 
 #### Vérification de process pour éviter les doublons (commandes externes)
@@ -185,13 +184,13 @@ for parametre in $@; do
   fi
   if [[ "$parametre" == "--edit-config" ]]; then
     nano $mon_script_config
-    exit 1
+    exit 0
   fi
   if [[ "$parametre" == "--efface-lock" ]]; then
     mon_lock=`echo $mon_dossier_config"/lock-"$mon_script_base`
     rm -f "$mon_lock"
     echo -e "$mui_lock_removed"
-    exit 1
+    exit 0
   fi
   if [[ "$parametre" == "--statut-lock" ]]; then
     statut_lock=`cat $mon_script_config | grep "maj_force=\"oui\""`
@@ -200,17 +199,17 @@ for parametre in $@; do
     else
       echo -e "$mui_lock_status_off"
     fi
-    exit 1
+    exit 0
   fi
   if [[ "$parametre" == "--active-lock" ]]; then
     sed -i 's/maj_force="oui"/maj_force="non"/g' $mon_script_config
     echo -e "$mui_lock_status_on"
-    exit 1
+    exit 0
   fi
   if [[ "$parametre" == "--desactive-lock" ]]; then
     sed -i 's/maj_force="non"/maj_force="oui"/g' $mon_script_config
     echo -e "$mui_lock_status_off"
-    exit 1
+    exit 0
   fi
   if [[ "$parametre" == "--extra-log" ]]; then
     mon_log_perso="| tee -a $mon_fichier_log"
@@ -218,7 +217,7 @@ for parametre in $@; do
   if [[ "$parametre" == "--purge-process" ]]; then
     pgrep -x "$mon_script_fichier" | xargs kill -9
     echo -e "$mui_purge_process"
-    exit 1
+    exit 0
   fi
   if [[ "$parametre" == "--purge-log" ]]; then
     cd $mon_path_log
@@ -234,7 +233,7 @@ for parametre in $@; do
     else
       echo -e "$mui_purge_log_ko"
     fi
-    exit 1
+    exit 0
   fi
   if [[ "$parametre" == "--help" ]]; then
     i=""
@@ -248,7 +247,7 @@ for parametre in $@; do
       mui_menu_help_display=`echo -e "$mui_menu_help$j"`
       echo -e "${!mui_menu_help_display}"
     done
-    exit 1
+    exit 0
   fi
   if [[ "$parametre" == "--no-update" ]]; then
     no_update="oui"
@@ -289,7 +288,7 @@ if [[ "$maj_force" == "non" ]] ; then
   if [[ -f "$mon_script_pid" ]] ; then
     computer_name=`hostname`
     source $mon_script_langue
-    echo "$mui_pid_check"
+    echo "$mui_pid_check_message"
     push-message "$mui_pid_check_title" "$mui_pid_check" "1"
     exit 1
   fi
@@ -328,10 +327,10 @@ if [[ "$md5_404_not_found" != "$distant_md5" ]];then
       echo "chmod 777 $mon_script_fichier" >> $mon_script_updater
       echo "$mui_update_done" >> $mon_script_updater
       echo "bash $mon_script_fichier $@" >> $mon_script_updater
-      echo "exit 1" >> $mon_script_updater
+      echo "exit 0" >> $mon_script_updater
       rm "$mon_script_pid"
       bash $mon_script_updater
-      exit 1
+      exit 0
     else
       eval 'echo -e "$mui_update_not_downloaded"' $mon_log_perso
     fi
@@ -357,7 +356,7 @@ eval 'printf "\e[43m%s%s%s\e[0m\n" "$before" "$mui_title" "$after"' $mon_log_per
 #### Nécessaire pour l'argument --update
 if [[ "$@" == "--update" ]]; then
   rm "$mon_script_pid"
-  exit 1
+  exit 0
 fi
 
 #### Vérification de la conformité du cron
@@ -491,7 +490,7 @@ EOT
   eval 'echo "$mui_no_conf_edit"'
   eval 'echo "mui_no_conf_help"'
   rm $pid_script
-  exit 1
+  exit 0
 fi
 echo "------------------------------------------------------------------------------"
 
@@ -626,12 +625,12 @@ eval 'printf "\e[43m%s%s%s\e[0m\n" "$before" "$mui_end_of_script" "$after"' $mon
 if [[ "$maj_necessaire" == "1" ]] && [[ -f "$fichier_log_perso" ]]; then
   cp $fichier_log_perso /var/log/$mon_script_base-last.log
 fi
-#rm "$mon_script_pid"
+rm "$mon_script_pid"
 
 if [[ "$1" == "--menu" ]]; then
   read -rsp $'Press a key to close the window...\n' -n1 key
 fi
-exit 1
+exit 0
 
 
 ### OLD
