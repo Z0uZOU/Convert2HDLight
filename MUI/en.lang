@@ -50,6 +50,7 @@ mui_menu_help_32="Commands like installing dépendencies or searches requires ro
 mui_menu_help_33=""
 
 ## Base du script
+mui_no_connection=" -- No Internet connection -- "
 mui_description="Range and rename downloads"
 mui_root_check="[ FAIL ] You must use the root account"
 mui_prevent_dupe_task="is currenlty running, end of script"

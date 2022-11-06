@@ -7,11 +7,11 @@
 # prendre en charge les petits fichiers (handbrake)
 # quand filebot pas installé ./convert2hdlight.sh: ligne 547: filebot : commande introuvable
 # Ne pas encoder de la merde, 720p ou 1080p DVDRiP uniquement
+## SI PAS DE PING SUR TVDB : exit
  
 ########################
 ## Script de Z0uZOU
 ########################
-## Installation bin: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && shc -f convert2hdlight.sh -o convert2hdlight.bin && chmod +x convert2hdlight.bin && rm -f *.x.c && rm -f convert2hdlight.sh
 ## Installation sh: wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/convert2hdlight.sh -O convert2hdlight.sh && sed -i -e 's/\r//g' convert2hdlight.sh && chmod +x convert2hdlight.sh
 ## Micro-config
 version="Version: 0.0.2.0" #base du système de mise à jour
@@ -20,7 +20,7 @@ script_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/c
 changelog_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/Changelog/convert2hdlight" #emplacement du changelog de ce script
 icone_github="https://github.com/Z0uZOU/Convert2HDLight/raw/master/.cache-icons/convert2hdlight.png" #emplacement de l'icône du script
 required_repos="" #ajout de repository
-required_tools="handbrake-cli trash-cli curl mlocate lm-sensors mediainfo nemo" #dépendances du script
+required_tools="handbrake-cli trash-cli curl mlocate lm-sensors mediainfo" #dépendances du script
 required_tools_pip="" #dépendances du script (PIP)
 script_cron="0 * * * *" #ne définir que la planification
 verification_process="HandBrakeCLI" #si ces process sont détectés on ne notifie pas (ou ne lance pas en doublon)
@@ -31,7 +31,43 @@ lien_filebot="https://github.com/Z0uZOU/Convert2HDLight/tree/master/FileBot" #li
  
 
 #### Vérification de la présence du Net
+net_connection=`ping thetvdb.com -c 1 2>/dev/null | grep "1 received"`
+if [[ "$net_connection" == "" ]]; then
+  mon_dossier_config=`echo "/root/.config/"$mon_script_base`
+  affichage_langue=$(locale | grep LANG | sed -n '1p' | cut -d= -f2 | cut -d_ -f1)
+  mon_script_langue=`echo $mon_dossier_config"/MUI/"$affichage_langue".lang"`
+
+  end_of_script=`date`
+  if [[ ! -f "$mon_script_langue" ]]; then
+    mui_no_connection=" -- No Internet connection -- "
+    mui_end_of_script=" -- END OF SCRIPT: $end_of_script -- "
+  else
+    source $mon_script_langue
+  fi
+  
+  my_title_count=`echo -n "$mui_no_connection" | sed "s/\\\e\[[0-9]\{1,2\}m//g" | wc -c`
+  line_lengh="78"
+  before_count=$((($line_lengh-$my_title_count)/2))
+  after_count=$(((($line_lengh-$my_title_count)%2)+$before_count))
+  before=`eval printf "%0.s-" {1..$before_count}`
+  after=`eval printf "%0.s-" {1..$after_count}`
+  eval 'printf "\e[101m%s%s%s\e[0m\n" "$before" "$mui_no_connection" "$after"' $mon_log_perso
+
+  my_title_count=`echo -n "$mui_end_of_script" | sed "s/\\\e\[[0-9]\{1,2\}m//g" | sed 's/é/e/g' | wc -c`
+  line_lengh="78"
+  before_count=$((($line_lengh-$my_title_count)/2))
+  after_count=$(((($line_lengh-$my_title_count)%2)+$before_count))
+  before=`eval printf "%0.s-" {1..$before_count}`
+  after=`eval printf "%0.s-" {1..$after_count}`
+  eval 'printf "\e[43m%s%s%s\e[0m\n" "$before" "$mui_end_of_script" "$after"' $mon_log_perso
+
+  if [[ "$1" == "--menu" ]]; then
+    read -rsp $'Press a key to close the window...\n' -n1 key
+  fi
+  exit 1
+fi
 md5_404_not_found=`curl -s "https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/404" | md5sum  | cut -f1 -d" "`
+
 
 #### Vérification de la langue du system
 if [[ "$@" =~ "--langue=" ]]; then
@@ -930,7 +966,7 @@ if [[ "$mes_medias" != "" ]] ; then
         categorie_text="Film détecté"
       fi
       eval 'echo -e "[\e[42m\u2713 \e[0m] "$categorie_text" : "$fichier' $mon_log_perso
-      filebot -mediainfo "$mon_media" --format "#0¢{gigabytes}#1¢{minutes}#2¢{vf}#3¢{vc}#4¢{audio.Language}#5¢{audio.Codec}#6¢{kbps}#7¢{s3d}#8¢" 2>/dev/null > $dossier_config/mediainfo.txt &
+      filebot -mediainfo "$mon_media" --format "#0¢{gigabytes}#1¢{minutes}#2¢{vf}#3¢{vc}#4¢{audio.Language}#5¢{audio.Format}#6¢{kbps}#7¢{s3d}#8¢{audio.Channels}#9¢" 2>/dev/null > $dossier_config/mediainfo.txt &
       pid=$!
       spin='-\|/'
       i=0
@@ -949,9 +985,11 @@ if [[ "$mes_medias" != "" ]] ; then
       mediainfo_langue_codec=`cat $dossier_config/mediainfo.txt | sed 's/.*#5¢//' | sed 's/#6¢.*//'`
       mediainfo_bitrate=`cat $dossier_config/mediainfo.txt | sed 's/.*#6¢//' | sed 's/#7¢.*//'`
       mediainfo_3d=`cat $dossier_config/mediainfo.txt | sed 's/.*#7¢//' | sed 's/#8¢.*//'`
-      rm -f $dossier_config/mediainfo.txt
+      mediainfo_channels=`cat $dossier_config/mediainfo.txt | sed 's/.*#8¢//' | sed 's/#9¢.*//'`
       mediainfo_langue_clean=`echo $mediainfo_langue | sed 's/\[//g' | sed 's/\]//g'`
       mediainfo_langue_codec_clean=`echo $mediainfo_langue_codec | sed 's/\[//g' | sed 's/\]//g'`
+      mediainfo_channels_clean=`echo $mediainfo_channels | sed 's/\[//g' | sed 's/\]//g'`
+      rm -f $dossier_config/mediainfo.txt
       
 #### Sauvegarde des caractéristiques du média
       if [[ -d "$chemin_argos" ]] && [[ "$activer_argos" == "oui" ]]; then
@@ -1092,11 +1130,11 @@ if [[ "$mes_medias" != "" ]] ; then
       fi
       if [[ -d "$chemin_argos" ]]; then chmod 777 -R $chemin_argos/convert2hdlight; fi
       rm -f $dossier_config/mediainfo.txt
-      eval 'echo -e "[..... |\e[7m ORIGINAL \e[0m| taille : $mediainfo_taille Go"' $mon_log_perso
+      eval 'echo -e "[..... |\e[7m ORIGINAL \e[0m| taille : $mediainfo_taille"' $mon_log_perso
       mediainfo_duree_clean=`printf '%dh %02dmin' $(($mediainfo_duree/60)) $(($mediainfo_duree%60))`
 	  eval 'echo -e "[..... |\e[7m ORIGINAL \e[0m| durée : $mediainfo_duree_clean"' $mon_log_perso
       eval 'echo -e "[..... |\e[7m ORIGINAL \e[0m| résolution : $mediainfo_resolution ($mediainfo_codec - $mediainfo_bitrate)"' $mon_log_perso
-      eval 'echo -e "[..... |\e[7m ORIGINAL \e[0m| langue(s) : $mediainfo_langue_clean ($mediainfo_langue_codec_clean)"' $mon_log_perso
+      eval 'echo -e "[..... |\e[7m ORIGINAL \e[0m| langue(s) : $mediainfo_langue_clean ($mediainfo_langue_codec_clean) ($mediainfo_channels_clean)"' $mon_log_perso
       if [[ "$mediainfo_3d" != "" ]] && [[ "$force_encodage" == "non" ]]; then
         if [[ ! -d "$dossier_cible_media_3D" ]]; then mkdir -p "$dossier_cible_media_3D"; fi
         mv "$mon_media" "$dossier_cible_media_3D/$fichier"
@@ -1195,7 +1233,7 @@ if [[ "$mes_medias" != "" ]] ; then
           main_user=`getent passwd "1000" | cut -d: -f1`
           chown $main_user:$main_user "$dossier_cible/$fichier"
           chmod 777 "$dossier_cible/$fichier"
-          filebot -mediainfo "$dossier_cible/$fichier" --format "#0¢{gigabytes}#1¢{minutes}#2¢{vf}#3¢{vc}#4¢{audio.Language}#5¢{audio.Codec}#6¢{kbps}#7¢{s3d}#8¢" > $dossier_config/mediainfo.txt &
+          filebot -mediainfo "$dossier_cible/$fichier" --format "#0¢{gigabytes}#1¢{minutes}#2¢{vf}#3¢{vc}#4¢{audio.Language}#5¢{audio.Format}#6¢{kbps}#7¢{s3d}#8¢{audio.Channels}#9¢" > $dossier_config/mediainfo.txt &
           pid=$!
           spin='-\|/'
           i=0
@@ -1214,14 +1252,16 @@ if [[ "$mes_medias" != "" ]] ; then
           mediainfo_langue_codec_enc=`cat $dossier_config/mediainfo.txt | sed 's/.*#5¢//' | sed 's/#6¢.*//'`
           mediainfo_bitrate_enc=`cat $dossier_config/mediainfo.txt | sed 's/.*#6¢//' | sed 's/#7¢.*//'`
           mediainfo_3d_enc=`cat $dossier_config/mediainfo.txt | sed 's/.*#7¢//' | sed 's/#8¢.*//'`
-          rm -f $dossier_config/mediainfo.txt
+          mediainfo_channels=`cat $dossier_config/mediainfo.txt | sed 's/.*#8¢//' | sed 's/#9¢.*//'`
           mediainfo_langue_enc_clean=`echo $mediainfo_langue_enc | sed 's/\[//g' | sed 's/\]//g'`
           mediainfo_langue_codec_enc_clean=`echo $mediainfo_langue_codec_enc | sed 's/\[//g' | sed 's/\]//g'`
-          eval 'echo -e "[..... |\e[7m CONVERTI \e[0m| taille : $mediainfo_taille_enc Go"' $mon_log_perso
+          mediainfo_channels_clean=`echo $mediainfo_channels | sed 's/\[//g' | sed 's/\]//g'`
+          rm -f $dossier_config/mediainfo.txt
+          eval 'echo -e "[..... |\e[7m CONVERTI \e[0m| taille : $mediainfo_taille_enc"' $mon_log_perso
           mediainfo_duree_enc_clean=`printf '%dh %02dmin' $(($mediainfo_duree_enc/60)) $(($mediainfo_duree_enc%60))`
           eval 'echo -e "[..... |\e[7m CONVERTI \e[0m| durée : $mediainfo_duree_enc_clean"' $mon_log_perso
           eval 'echo -e "[..... |\e[7m CONVERTI \e[0m| résolution : $mediainfo_resolution_enc ($mediainfo_codec_enc - $mediainfo_bitrate_enc)"' $mon_log_perso
-          eval 'echo -e "[..... |\e[7m CONVERTI \e[0m| langue(s) : $mediainfo_langue_enc_clean ($mediainfo_langue_codec_enc_clean)"' $mon_log_perso
+          eval 'echo -e "[..... |\e[7m CONVERTI \e[0m| langue(s) : $mediainfo_langue_enc_clean ($mediainfo_langue_codec_enc_clean) ($mediainfo_channels_clean)"' $mon_log_perso
           mv "$dossier_cible/$fichier" "$dossier_cible/$fichier-part"
           echec_conversion="0"
           if [[ "$mediainfo_duree" == "$mediainfo_duree_enc" ]]; then

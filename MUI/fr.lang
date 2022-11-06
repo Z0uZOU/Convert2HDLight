@@ -50,6 +50,7 @@ mui_menu_help_32="Des commandes comme les installations de dépendances ou les r
 mui_menu_help_33=""
 
 ## Base du script
+mui_no_connection=" -- Pas de connexion Internet -- "
 mui_description="Convertisseur en HDLight" #description pour le menu
 mui_root_check="[ ERREUR ] Vous devez impérativement utiliser le compte root"
 mui_prevent_dupe_task="est en cours de fonctionnement, arrêt du script"
