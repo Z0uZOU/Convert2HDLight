@@ -626,7 +626,7 @@ eval 'printf "\e[43m%s%s%s\e[0m\n" "$before" "$mui_end_of_script" "$after"' $mon
 if [[ "$maj_necessaire" == "1" ]] && [[ -f "$fichier_log_perso" ]]; then
   cp $fichier_log_perso /var/log/$mon_script_base-last.log
 fi
-rm "$mon_script_pid"
+#rm "$mon_script_pid"
 
 if [[ "$1" == "--menu" ]]; then
   read -rsp $'Press a key to close the window...\n' -n1 key

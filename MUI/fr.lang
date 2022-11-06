@@ -59,6 +59,7 @@ mui_pid_check_message="Il y a au moins un autre process du script en cours sur $
 mui_pushover_updated_title="Mise à jour"
 mui_pushover_updated_msg="Le progamme $mon_script_base a été mis à jour."
 mui_update_available="Une mise à jour est disponible"
+mui_update_not_downloaded="La mise à jour est ignorée..."
 mui_update_download="Téléchargement de la mise à jour et installation..."
 mui_update_done="echo Mise à jour mise en place"
 mui_title=" -- $mon_script_base_maj -- "

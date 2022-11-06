@@ -58,6 +58,7 @@ mui_pid_check="There is another process of this script currently running on $com
 mui_pushover_updated_title="Update"
 mui_pushover_updated_msg="The script $mon_script_base was updated"
 mui_update_available="Update available"
+mui_update_not_downloaded="Update is ignored..."
 mui_update_download="Downloading and applying update..."
 mui_update_done="echo Update applied"
 mui_title=" -- $mon_script_base_maj -- "
