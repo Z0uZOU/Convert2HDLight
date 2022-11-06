@@ -1249,16 +1249,16 @@ if [[ "$mes_medias" != "" ]] ; then
           mediainfo_langue_codec_enc=`cat $dossier_config/mediainfo.txt | sed 's/.*#5¢//' | sed 's/#6¢.*//'`
           mediainfo_bitrate_enc=`cat $dossier_config/mediainfo.txt | sed 's/.*#6¢//' | sed 's/#7¢.*//'`
           mediainfo_3d_enc=`cat $dossier_config/mediainfo.txt | sed 's/.*#7¢//' | sed 's/#8¢.*//'`
-          mediainfo_channels=`cat $dossier_config/mediainfo.txt | sed 's/.*#8¢//' | sed 's/#9¢.*//'`
+          mediainfo_channels_enc=`cat $dossier_config/mediainfo.txt | sed 's/.*#8¢//' | sed 's/#9¢.*//'`
           mediainfo_langue_enc_clean=`echo $mediainfo_langue_enc | sed 's/\[//g' | sed 's/\]//g'`
           mediainfo_langue_codec_enc_clean=`echo $mediainfo_langue_codec_enc | sed 's/\[//g' | sed 's/\]//g'`
-          mediainfo_channels_clean=`echo $mediainfo_channels | sed 's/\[//g' | sed 's/\]//g'`
+          mediainfo_channels_enc_clean=`echo $mediainfo_channels_enc | sed 's/\[//g' | sed 's/\]//g'`
           rm -f $dossier_config/mediainfo.txt
           eval 'echo -e "[..... |\e[7m CONVERTI \e[0m| taille : $mediainfo_taille_enc"' $mon_log_perso
           mediainfo_duree_enc_clean=`printf '%dh %02dmin' $(($mediainfo_duree_enc/60)) $(($mediainfo_duree_enc%60))`
           eval 'echo -e "[..... |\e[7m CONVERTI \e[0m| durée : $mediainfo_duree_enc_clean"' $mon_log_perso
           eval 'echo -e "[..... |\e[7m CONVERTI \e[0m| résolution : $mediainfo_resolution_enc ($mediainfo_codec_enc - $mediainfo_bitrate_enc)"' $mon_log_perso
-          eval 'echo -e "[..... |\e[7m CONVERTI \e[0m| langue(s) : $mediainfo_langue_enc_clean ($mediainfo_langue_codec_enc_clean) ($mediainfo_channels_clean)"' $mon_log_perso
+          eval 'echo -e "[..... |\e[7m CONVERTI \e[0m| langue(s) : $mediainfo_langue_enc_clean ($mediainfo_langue_codec_enc_clean) ($mediainfo_channels_enc_clean)"' $mon_log_perso
           mv "$dossier_cible/$fichier" "$dossier_cible/$fichier-part"
           echec_conversion="0"
           if [[ "$mediainfo_duree" == "$mediainfo_duree_enc" ]]; then
