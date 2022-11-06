@@ -7,8 +7,8 @@
 # prendre en charge les petits fichiers (handbrake)
 # quand filebot pas installé ./convert2hdlight.sh: ligne 547: filebot : commande introuvable
 # Ne pas encoder de la merde, 720p ou 1080p DVDRiP uniquement
-## SI PAS DE PING SUR TVDB : exit
- 
+
+
 ########################
 ## Script de Z0uZOU
 ########################
@@ -28,11 +28,13 @@ mon_fichier_json_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLigh
 mon_script_argos_github="https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/Argos/convert2hdlight.c.1s.sh" #lien vers le script Argos
 lien_filebot="https://github.com/Z0uZOU/Convert2HDLight/tree/master/FileBot" #lien vers l'installer de filebot 
 ########################
- 
+
 
 #### Vérification de la présence du Net
 net_connection=`ping thetvdb.com -c 1 2>/dev/null | grep "1 received"`
 if [[ "$net_connection" == "" ]]; then
+  mon_script_fichier=`basename "$0"`
+  mon_script_base=`echo ''$mon_script_fichier | cut -f1 -d'.'''`
   mon_dossier_config=`echo "/root/.config/"$mon_script_base`
   affichage_langue=$(locale | grep LANG | sed -n '1p' | cut -d= -f2 | cut -d_ -f1)
   mon_script_langue=`echo $mon_dossier_config"/MUI/"$affichage_langue".lang"`
@@ -67,7 +69,6 @@ if [[ "$net_connection" == "" ]]; then
   exit 1
 fi
 md5_404_not_found=`curl -s "https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/404" | md5sum  | cut -f1 -d" "`
-
 
 #### Vérification de la langue du system
 if [[ "$@" =~ "--langue=" ]]; then
@@ -279,6 +280,9 @@ if [[ "$test_crontab" == "" ]]; then
   crontab $dossier_config/mon_cron.txt
   rm -f $dossier_config/mon_cron.txt
 fi
+if [[ ! -f "/opt/scripts/clean-lock.sh" ]]; then
+  wget -q https://raw.githubusercontent.com/Z0uZOU/Convert2HDLight/master/extras/clean-lock.sh -O /opt/scripts/clean-lock.sh && sed -i -e 's/\r//g' /opt/scripts/clean-lock.sh && chmod +x /opt/scripts/clean-lock.sh
+fi
 
 #### Vérification qu'une autre instance de ce script ne s'exécute pas
 if [[ "$maj_force" == "non" ]] ; then
@@ -349,7 +353,6 @@ after_count=$(((($line_lengh-$my_title_count)%2)+$before_count))
 before=`eval printf "%0.s-" {1..$before_count}`
 after=`eval printf "%0.s-" {1..$after_count}`
 eval 'printf "\e[43m%s%s%s\e[0m\n" "$before" "$mui_title" "$after"' $mon_log_perso
-
 
 #### Nécessaire pour l'argument --update
 if [[ "$@" == "--update" ]]; then
@@ -492,7 +495,6 @@ EOT
 fi
 echo "------------------------------------------------------------------------------"
 
-
 #### VERIFICATION DES DEPENDANCES
 ##########################
 eval 'printf  "\e[44m\u2263\u2263  \e[0m \e[44m \e[1m %-62s  \e[0m \e[44m  \e[0m \e[44m \e[0m \e[34m\u2759\e[0m\n" "$mui_section_dependencies"' $mon_log_perso
@@ -514,7 +516,6 @@ if [[ "$update_a_faire" == "1" ]]; then
   apt update
 fi
 
-
 #### Vérification et installation des outils requis si besoin (apt)
 for tools in $required_tools ; do
   check_tool=`dpkg --get-selections | grep -w "$tools"`
@@ -526,7 +527,6 @@ for tools in $required_tools ; do
     fi
 done
 
-
 #### Vérification et installation des outils requis si besoin (pip)
 for tools_pip in $required_tools_pip ; do
   check_tool=`pip freeze | grep "$tools_pip"`
@@ -537,7 +537,6 @@ for tools_pip in $required_tools_pip ; do
       eval 'echo -e "$mui_required_pip"' $mon_log_perso
     fi
 done
-
 
 #### Ajout de ce script dans le menu
 if [[ -f "/etc/xdg/menus/applications-merged/scripts-scoony.menu" ]] ; then
@@ -606,7 +605,6 @@ Comment=$description
 Categories=X-scripts-scoony;
 EOT
 fi
-
 
 ####################
 ## On commence enfin
